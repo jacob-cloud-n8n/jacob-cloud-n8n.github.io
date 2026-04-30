@@ -1,0 +1,398 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { fallbackNews } from "@lib/content";
+import { getProducts } from "@lib/notion";
+import { siteNavigation } from "@lib/site";
+
+const products = (await getProducts()).slice(0, 3);
+const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+---
+
+<MainLayout
+  title="小牧人羊奶｜讓每一口鮮乳都充滿陽光的溫度"
+  description="小牧人羊奶提供鮮羊乳、優酪乳、手作甜點與週配訂購服務，從牧場直送到餐桌，喝得到新鮮與安心。"
+  path="/"
+>
+  <main>
+    <section class="home-hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="pill">清晨鮮奶直送，讓人安心的風味</span>
+          <h1>讓每一口鮮乳<br />都充滿陽光的溫度</h1>
+          <p>「小牧人」不只是品牌，更是對土地的承諾。在清晨的露水與金色陽光中，為您的家人遞上一瓶最純粹的營養。</p>
+          <div class="cta-row">
+            <a class="button" href="/delivery/">立即訂購</a>
+            <a class="button secondary" href="/line/">加入官方 line</a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <img src="/images/goat-field.webp" alt="陽光牧場中的小羊" width="720" height="720" />
+          <div class="rating-card">
+            <strong>100% 天然</strong>
+            <span>牧場冷鏈直送，守護鮮乳純淨風味。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section news-band">
+      <div class="container">
+        <div class="center-head">
+          <h2>最新消息</h2>
+        </div>
+        <div class="news-grid">
+          {latestNews.map((item) => (
+            <a class="news-card" href={`/news/${item.slug}/`}>
+              <time>{item.date}</time>
+              <h3>{item.title}</h3>
+              <p>{item.excerpt}</p>
+              <span>閱讀更多 +</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="split-head">
+          <div>
+            <h2>精選牧人風味</h2>
+            <p>讓每日鮮乳、優酪乳與手作甜點，成為餐桌上的小小期待。</p>
+          </div>
+          <a href="/products/">查看全部商品 →</a>
+        </div>
+        <div class="home-product-grid">
+          {products.map((product) => (
+            <article class="home-product-card">
+              <div class="product-orb">
+                <img src={product.image} alt={product.name} width="260" height="260" loading="lazy" />
+              </div>
+              <h3>{product.name}</h3>
+              <p>{product.desc}</p>
+              <div class="home-product-meta">
+                <strong>NT$ {product.price}</strong>
+                <a href="/delivery/" aria-label={`訂購 ${product.name}`}>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 8h15l-2 8H8L6 4H3" />
+                    <path d="M9 20h.01M18 20h.01" />
+                  </svg>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section subscribe-section">
+      <div class="container subscribe-card">
+        <h2>現在訂閱，<br />開啟您的晨間牧場食光</h2>
+        <p>加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。</p>
+        <div class="subscribe-form">
+          <input type="email" name="email" placeholder="Email / 電話輸入" aria-label="Email 或電話" />
+          <a class="button" href={siteNavigation.googleMapsUrl} target="_blank" rel="noopener noreferrer">導航到小牧人羊奶</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<style>
+  .home-hero {
+    margin-top: -82px;
+    padding: 180px 0 96px;
+    background: linear-gradient(120deg, #fff8f3 0%, #fff2df 52%, #f8fbef 100%);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.88fr;
+    gap: 58px;
+    align-items: center;
+  }
+
+  .pill {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: rgba(141, 163, 153, 0.2);
+    color: #4e635a;
+    font-size: 0.86rem;
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 22px 0 18px;
+    color: #3e2f12;
+    font-size: clamp(3rem, 7vw, 5.8rem);
+    line-height: 1.04;
+    letter-spacing: 0;
+  }
+
+  .hero-copy p {
+    max-width: 610px;
+    margin: 0 0 30px;
+    color: rgba(62, 54, 46, 0.76);
+    font-size: 1.14rem;
+  }
+
+  .hero-card {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 440px);
+  }
+
+  .hero-card img {
+    aspect-ratio: 0.82;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 42px 42px 54px 54px;
+    box-shadow: 0 26px 60px rgba(62, 54, 46, 0.16);
+  }
+
+  .rating-card {
+    position: absolute;
+    bottom: -22px;
+    left: -44px;
+    width: 210px;
+    border-radius: 18px;
+    padding: 18px;
+    background: #fff8f3;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .rating-card strong {
+    display: block;
+    color: var(--color-primary-strong);
+  }
+
+  .rating-card span {
+    color: rgba(62, 54, 46, 0.68);
+    font-size: 0.86rem;
+  }
+
+  .news-band {
+    background: rgba(245, 226, 197, 0.5);
+  }
+
+  .center-head {
+    text-align: center;
+  }
+
+  .center-head h2,
+  .split-head h2 {
+    margin: 0;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+  }
+
+  .news-grid,
+  .home-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 32px;
+  }
+
+  .home-product-grid {
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .home-product-card {
+    display: grid;
+    justify-items: center;
+    border: 1px solid rgba(130, 117, 97, 0.12);
+    border-radius: 22px;
+    padding: 24px 22px 22px;
+    background: rgba(255, 248, 243, 0.94);
+    box-shadow: 0 14px 32px rgba(62, 54, 46, 0.08);
+    text-align: center;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .home-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .product-orb {
+    width: min(72vw, 284px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 6px solid #fff;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px rgba(130, 117, 97, 0.08), 0 10px 22px rgba(62, 54, 46, 0.08);
+  }
+
+  .product-orb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .home-product-card h3 {
+    margin: 22px 0 6px;
+    font-size: 1.14rem;
+  }
+
+  .home-product-card p {
+    min-height: 48px;
+    margin: 0;
+    color: rgba(62, 54, 46, 0.64);
+    font-size: 0.92rem;
+  }
+
+  .home-product-meta {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 18px;
+  }
+
+  .home-product-meta strong {
+    color: var(--color-primary-strong);
+  }
+
+  .home-product-meta a {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: var(--color-primary-strong);
+    transition: transform 180ms ease;
+  }
+
+  .home-product-meta a:hover {
+    transform: scale(1.08);
+  }
+
+  .news-card {
+    min-height: 190px;
+    border: 1px solid rgba(130, 117, 97, 0.12);
+    border-radius: 18px;
+    padding: 24px;
+    background: rgba(255, 248, 243, 0.9);
+    box-shadow: 0 10px 24px rgba(62, 54, 46, 0.07);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  time {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 4px 9px;
+    background: rgba(141, 163, 153, 0.18);
+    color: #4e635a;
+    font-size: 0.78rem;
+    font-weight: 900;
+  }
+
+  .news-card h3 {
+    margin: 14px 0 8px;
+    font-size: 1.12rem;
+    line-height: 1.35;
+  }
+
+  .news-card p {
+    color: rgba(62, 54, 46, 0.68);
+    font-size: 0.92rem;
+  }
+
+  .news-card span,
+  .split-head a {
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  .split-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .split-head p {
+    margin: 8px 0 0;
+    color: rgba(62, 54, 46, 0.66);
+  }
+
+  .subscribe-card {
+    max-width: 880px;
+    border-radius: 34px;
+    padding: 58px 34px;
+    background: #3f6256;
+    color: #fff8f3;
+    text-align: center;
+    box-shadow: 0 18px 48px rgba(63, 98, 86, 0.22);
+  }
+
+  .subscribe-card h2 {
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1.08;
+  }
+
+  .subscribe-card p {
+    max-width: 560px;
+    margin: 18px auto 26px;
+    color: rgba(255, 248, 243, 0.84);
+  }
+
+  .subscribe-form {
+    display: flex;
+    width: min(100%, 540px);
+    gap: 10px;
+    margin-inline: auto;
+    justify-content: center;
+  }
+
+  .subscribe-form .button {
+    white-space: nowrap;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 18px;
+    background: #fff;
+  }
+
+  @media (max-width: 860px) {
+    .home-hero {
+      padding-top: 152px;
+    }
+
+    .hero-grid,
+    .news-grid,
+    .home-product-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-card {
+      width: min(100%, 360px);
+    }
+
+    .rating-card {
+      right: 12px;
+      left: auto;
+    }
+
+    .split-head,
+    .subscribe-form {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
+</style>

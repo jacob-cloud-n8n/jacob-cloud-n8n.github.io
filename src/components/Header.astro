@@ -1,0 +1,199 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+const navItems = [
+  { href: "/", label: "首頁", icon: "home" },
+  { href: "/news/", label: "最新消息", icon: "news" },
+  { href: "/milestones/", label: "小牧人大事記", icon: "sprout" },
+  { href: "/products/", label: "商品廚窗", icon: "basket" },
+  { href: "/delivery/", label: "配送方案", icon: "truck" },
+  { href: "/line/", label: "加入官方 Line", icon: "message" }
+];
+
+const iconPaths: Record<string, string> = {
+  home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+  news: '<path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+  sprout: '<path d="M12 20V10"/><path d="M12 10C8 10 5 7 5 3c4 0 7 3 7 7Z"/><path d="M12 12c4 0 7-3 7-7-4 0-7 3-7 7Z"/>',
+  basket: '<path d="m7 10 5-7 5 7"/><path d="M4 10h16l-2 10H6L4 10Z"/><path d="M9 14v2M15 14v2"/>',
+  truck: '<path d="M3 6h11v10H3z"/><path d="M14 10h4l3 3v3h-7z"/><path d="M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>',
+  message: '<path d="M21 12a8 8 0 0 1-8 8H6l-3 2 1.4-4.2A8 8 0 1 1 21 12Z"/><path d="M8 12h.01M12 12h.01M16 12h.01"/>'
+};
+
+function isActive(href: string) {
+  return href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+}
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label="小牧人羊奶首頁">
+    <img src="/images/logo.webp" alt="小牧人羊奶" width="92" height="58" />
+  </a>
+  <nav class="desktop-nav" aria-label="主要導覽">
+    {navItems.map((item) => (
+      <a class:list={["nav-link", { active: isActive(item.href) }]} href={item.href}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
+  <a class="button order-link" href="/products/">立即訂購</a>
+</header>
+
+<nav class="mobile-nav" aria-label="手機導覽">
+  {navItems.map((item) => (
+    <a class:list={["mobile-icon", { active: isActive(item.href) }]} href={item.href} aria-label={item.label}>
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" set:html={iconPaths[item.icon]} />
+    </a>
+  ))}
+</nav>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 14px;
+    z-index: 20;
+    display: grid;
+    width: min(1180px, calc(100% - 32px));
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 18px;
+    margin: 14px auto 0;
+    border: 1px solid rgba(130, 117, 97, 0.12);
+    border-radius: 999px;
+    padding: 8px 10px 8px 18px;
+    background: rgba(253, 251, 247, 0.86);
+    box-shadow: 0 12px 28px rgba(62, 54, 46, 0.08);
+    backdrop-filter: blur(16px);
+  }
+
+  .brand {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+  }
+
+  .brand img {
+    width: 92px;
+    height: auto;
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 4px;
+    color: rgba(62, 54, 46, 0.78);
+    font-size: 0.92rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: color 180ms ease;
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    right: 4px;
+    bottom: 0;
+    left: 4px;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transition: transform 180ms ease;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible,
+  .nav-link.active {
+    color: var(--color-primary-strong);
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after,
+  .nav-link.active::after {
+    transform: scaleX(1);
+  }
+
+  .mobile-icon {
+    position: relative;
+    display: inline-flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    color: rgba(62, 54, 46, 0.7);
+    transition: transform 180ms ease, color 180ms ease, background 180ms ease;
+  }
+
+  .mobile-icon:hover,
+  .mobile-icon:focus-visible {
+    transform: translateY(-2px) scale(1.04);
+    color: var(--color-primary-strong);
+    background: rgba(243, 178, 27, 0.14);
+  }
+
+  .mobile-icon.active {
+    color: var(--color-primary-strong);
+    background: rgba(243, 178, 27, 0.22);
+  }
+
+  .order-link {
+    justify-self: end;
+    border-radius: 999px;
+    padding-inline: 22px;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    z-index: 30;
+    display: none;
+    justify-content: space-around;
+    border: 1px solid rgba(130, 117, 97, 0.14);
+    border-radius: 28px;
+    padding: 8px;
+    background: rgba(253, 251, 247, 0.92);
+    box-shadow: 0 16px 36px rgba(62, 54, 46, 0.12);
+    backdrop-filter: blur(16px);
+  }
+
+  @media (max-width: 760px) {
+    .site-header {
+      top: 10px;
+      width: min(100% - 24px, 1120px);
+      grid-template-columns: 1fr auto;
+      border-radius: 24px;
+      padding: 10px 12px;
+    }
+
+    .desktop-nav {
+      display: none;
+    }
+
+    .brand img {
+      width: 84px;
+    }
+
+    .order-link {
+      min-height: 42px;
+      padding: 9px 14px;
+      font-size: 0.92rem;
+    }
+
+    .mobile-nav {
+      display: flex;
+    }
+  }
+</style>

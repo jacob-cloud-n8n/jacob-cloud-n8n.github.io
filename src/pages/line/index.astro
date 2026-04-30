@@ -1,0 +1,160 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+
+const lineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@little-shepherd";
+---
+
+<MainLayout
+  title="加入官方 Line｜小牧人羊奶訂購與生活服務"
+  description="加入小牧人羊奶官方 Line，查詢配送、預留商品、接收新品與門市資訊。"
+  path="/line/"
+>
+  <main>
+    <section class="line-page">
+      <div class="container">
+        <div class="center-head">
+          <span class="pill">官方客服與訂購</span>
+          <h1>「加入小牧人官方 LINE，<br />開啟溫馨羊乳生活」</h1>
+          <p>即時掌握牧場新鮮事，享受一對一專屬服務。</p>
+        </div>
+        <div class="line-grid">
+          <article class="benefits">
+            <h2>加入會員好友</h2>
+            <div>
+              <strong>快速掌握新品</strong>
+              <p>第一時間收到特調與甜點供應資訊。</p>
+            </div>
+            <div>
+              <strong>訂單即時查詢</strong>
+              <p>詢問配送週期、到貨時間與付款方式。</p>
+            </div>
+            <div>
+              <strong>專屬會員優惠</strong>
+              <p>不定期提供門市與週配優惠。</p>
+            </div>
+          </article>
+          <article class="qr-panel">
+            <span>LINE 官方帳號</span>
+            <div class="qr">LINE</div>
+            <a class="button" href={lineUrl}>立即掃描加入</a>
+            <small>或搜尋 LINE ID：@LittleShepherd</small>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<style>
+  .line-page {
+    min-height: 720px;
+    margin-top: -82px;
+    padding: 144px 0 90px;
+    background:
+      radial-gradient(circle at 18% 18%, rgba(243, 178, 27, 0.18), transparent 26rem),
+      radial-gradient(circle at 84% 20%, rgba(141, 163, 153, 0.2), transparent 24rem),
+      #fff8f3;
+  }
+
+  .center-head {
+    text-align: center;
+  }
+
+  .pill {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: rgba(243, 178, 27, 0.16);
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 22px 0 12px;
+    font-size: clamp(2.25rem, 6vw, 4.8rem);
+    line-height: 1.14;
+    letter-spacing: 0;
+  }
+
+  .center-head p {
+    color: rgba(62, 54, 46, 0.7);
+  }
+
+  .line-grid {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 28px;
+    max-width: 840px;
+    margin: 42px auto 0;
+  }
+
+  .benefits,
+  .qr-panel {
+    border-radius: 24px;
+    padding: 30px;
+    background: rgba(255, 248, 243, 0.9);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .benefits h2 {
+    margin: 0 0 20px;
+  }
+
+  .benefits div {
+    border-left: 8px solid rgba(141, 163, 153, 0.36);
+    padding-left: 16px;
+  }
+
+  .benefits div + div {
+    margin-top: 18px;
+  }
+
+  .benefits strong {
+    display: block;
+  }
+
+  .benefits p {
+    margin: 4px 0 0;
+    color: rgba(62, 54, 46, 0.64);
+    font-size: 0.92rem;
+  }
+
+  .qr-panel {
+    display: grid;
+    justify-items: center;
+    border: 3px solid var(--color-primary);
+    text-align: center;
+  }
+
+  .qr-panel span {
+    border-radius: 999px;
+    padding: 6px 14px;
+    background: var(--color-primary);
+    font-weight: 900;
+  }
+
+  .qr {
+    display: grid;
+    width: min(64vw, 210px);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 16px solid #eef8ed;
+    border-radius: 18px;
+    background:
+      linear-gradient(90deg, #00b900 10px, transparent 10px) 0 0 / 28px 28px,
+      linear-gradient(#00b900 10px, transparent 10px) 0 0 / 28px 28px,
+      #fff;
+    color: #00b900;
+    font-weight: 900;
+  }
+
+  small {
+    color: rgba(62, 54, 46, 0.62);
+  }
+
+  @media (max-width: 760px) {
+    .line-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,118 @@
+---
+import type { Product } from "@lib/content";
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<article class="product-card">
+  <div class="product-image">
+    <img src={product.image} alt={product.name} width="480" height="360" loading="lazy" />
+  </div>
+  <div class="product-body">
+    <span>{product.category}</span>
+    <h3>{product.name}</h3>
+    <p>{product.desc}</p>
+    <div class="product-meta">
+      <strong>NT$ {product.price}</strong>
+      <a class="cart-button" href="/delivery/" aria-label={`訂購 ${product.name}`}>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 8h15l-2 8H8L6 4H3" />
+          <path d="M9 20h.01M18 20h.01" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .product-card {
+    display: grid;
+    overflow: hidden;
+    border-radius: 24px;
+    background: rgba(255, 248, 243, 0.9);
+    box-shadow: var(--shadow-soft);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .product-image {
+    aspect-ratio: 4 / 3;
+    background: var(--color-surface);
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 360ms ease;
+  }
+
+  .product-card:hover img {
+    transform: scale(1.04);
+  }
+
+  .product-body {
+    padding: 20px;
+  }
+
+  span {
+    color: var(--color-primary-strong);
+    font-size: 0.82rem;
+    font-weight: 900;
+  }
+
+  h3 {
+    margin: 6px 0 8px;
+    font-size: 1.24rem;
+    line-height: 1.25;
+  }
+
+  p {
+    min-height: 52px;
+    margin: 0;
+    color: rgba(62, 54, 46, 0.7);
+    font-size: 0.95rem;
+  }
+
+  .product-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 18px;
+  }
+
+  strong {
+    color: var(--color-primary-strong);
+    font-size: 1.18rem;
+  }
+
+  .cart-button {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(141, 163, 153, 0.68);
+    border-radius: 999px;
+    color: var(--color-text);
+    transition: transform 180ms ease, background 180ms ease;
+  }
+
+  .cart-button:hover,
+  .cart-button:focus-visible {
+    transform: scale(1.1);
+    background: rgba(141, 163, 153, 0.18);
+  }
+
+  .cart-button:active {
+    transform: scale(0.92);
+  }
+</style>

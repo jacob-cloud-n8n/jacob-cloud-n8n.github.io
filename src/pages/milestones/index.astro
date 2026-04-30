@@ -1,0 +1,220 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { getMilestones } from "@lib/notion";
+
+const milestoneEntries = await getMilestones();
+---
+
+<MainLayout
+  title="小牧人大事記｜牧場到餐桌的品牌旅程"
+  description="回顧小牧人羊奶從牧場初心、光復新村摘星、冷鏈週配到持續拓展的品牌大事記。"
+  path="/milestones/"
+>
+  <main>
+    <section class="story-hero">
+      <div class="container story-grid">
+        <div>
+          <span class="pill">One Day</span>
+          <h1>牧場到餐桌的<br />鮮純承諾</h1>
+          <p>從凌晨處理鮮乳，到光復新村的日常服務，小牧人的故事是一段把純淨風味帶給更多家庭的旅程。</p>
+        </div>
+        <img src="/images/goat-field.webp" alt="陽光牧場中的山羊" width="640" height="480" />
+      </div>
+    </section>
+
+    <section class="belief">
+      <div class="container">
+        <span class="eyebrow">Brand Philosophy</span>
+        <h2>「新鮮」是我們唯一的堅持</h2>
+        <div class="belief-grid">
+          <article>
+            <strong>當天製備</strong>
+            <p>每天凌晨開始處理鮮乳，縮短從牧場到餐桌的時間。</p>
+          </article>
+          <article>
+            <strong>純粹無添加</strong>
+            <p>以低溫殺菌保留營養與清爽口感，喝得到原始風味。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="center-head">
+          <h2>小牧人的足跡</h2>
+          <p>一步一步，從牧場走進光復新村與更多家庭。</p>
+        </div>
+        <div class="milestone-list">
+          {milestoneEntries.map((entry, index) => (
+            <article class:list={["milestone", { flip: index % 2 === 1 }]}>
+              <div class="node">{String(index + 1).padStart(2, "0")}</div>
+              <div class="copy">
+                <h3>{entry.title}</h3>
+                <p>{entry.richContent}</p>
+              </div>
+              <img src={entry.image ?? "/images/goat-field.webp"} alt={entry.title} width="560" height="360" loading="lazy" />
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<style>
+  .story-hero {
+    margin-top: -82px;
+    padding: 150px 0 74px;
+    background: linear-gradient(120deg, #fff8f3, #fff1df);
+  }
+
+  .story-grid {
+    display: grid;
+    grid-template-columns: 0.92fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .pill {
+    border-radius: 999px;
+    padding: 7px 12px;
+    background: rgba(217, 115, 78, 0.12);
+    color: var(--color-accent);
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 16px 0;
+    font-size: clamp(2.8rem, 6vw, 5.4rem);
+    line-height: 1.05;
+    letter-spacing: 0;
+  }
+
+  .story-grid p,
+  .center-head p {
+    color: rgba(62, 54, 46, 0.72);
+  }
+
+  .story-grid img {
+    aspect-ratio: 1.7;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .belief {
+    padding: 64px 0;
+    background: #f1e3cf;
+    text-align: center;
+  }
+
+  .belief h2 {
+    margin: 10px 0 30px;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .belief-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .belief-grid article {
+    border-radius: 18px;
+    padding: 24px;
+    background: rgba(255, 248, 243, 0.86);
+  }
+
+  .belief-grid strong {
+    color: var(--color-primary-strong);
+    font-size: 1.18rem;
+  }
+
+  .center-head {
+    text-align: center;
+  }
+
+  .center-head h2 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+  }
+
+  .milestone-list {
+    display: grid;
+    gap: 54px;
+    margin-top: 46px;
+  }
+
+  .milestone {
+    display: grid;
+    grid-template-columns: 48px 1fr 1fr;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .milestone.flip .copy {
+    order: 3;
+  }
+
+  .milestone.flip img {
+    order: 2;
+  }
+
+  .node {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #3e362e;
+    font-weight: 900;
+  }
+
+  .copy {
+    border-radius: 18px;
+    padding: 26px;
+    background: rgba(255, 248, 243, 0.86);
+    box-shadow: 0 8px 22px rgba(62, 54, 46, 0.06);
+  }
+
+  .copy h3 {
+    margin: 0 0 10px;
+    color: var(--color-primary-strong);
+    font-size: 1.45rem;
+  }
+
+  .copy p {
+    margin: 0;
+    color: rgba(62, 54, 46, 0.72);
+  }
+
+  .milestone img {
+    width: 100%;
+    aspect-ratio: 1.8;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  @media (max-width: 820px) {
+    .story-grid,
+    .belief-grid,
+    .milestone {
+      grid-template-columns: 1fr;
+    }
+
+    .milestone.flip .copy,
+    .milestone.flip img {
+      order: initial;
+    }
+
+    .node {
+      margin-left: 4px;
+    }
+  }
+</style>

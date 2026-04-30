@@ -1,0 +1,75 @@
+---
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div>
+      <img class="footer-logo" src="/images/logo.webp" alt="小牧人羊奶" width="130" height="84" loading="lazy" />
+      <p>致力於提供最純淨、健康的羊奶產品，把牧場的溫度傳遞給每個家庭。</p>
+    </div>
+    <div class="footer-links">
+      <a href="/news/">最新消息</a>
+      <a href="/milestones/">大事記</a>
+      <a href="/products/">商品廚窗</a>
+      <a href="/delivery/">配送方案</a>
+      <a href="/line/">加入 Line</a>
+    </div>
+  </div>
+  <div class="container copyright">© 小牧人羊奶 Pastoral Harmony. All Rights Reserved.</div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 40px;
+    border-top: 1px solid rgba(130, 117, 97, 0.14);
+    background: rgba(245, 242, 234, 0.62);
+    padding: 52px 0 28px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 36px;
+    align-items: center;
+  }
+
+  .footer-logo {
+    width: 120px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    max-width: 440px;
+    margin: 0;
+    color: rgba(62, 54, 46, 0.72);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px;
+    color: rgba(62, 54, 46, 0.74);
+    font-weight: 700;
+  }
+
+  .footer-links a:hover {
+    color: var(--color-primary-strong);
+  }
+
+  .copyright {
+    margin-top: 36px;
+    color: rgba(62, 54, 46, 0.56);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 760px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .footer-links {
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  }
+</style>

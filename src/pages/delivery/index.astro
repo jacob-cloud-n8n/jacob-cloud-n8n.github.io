@@ -1,0 +1,320 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { deliveryMethods } from "@lib/content";
+---
+
+<MainLayout
+  title="配送方案｜小牧人羊奶鮮奶週配服務"
+  description="小牧人羊奶配送方案提供一週三瓶、週五瓶與頻率選擇，透過官方 Line 確認週配與費用。"
+  path="/delivery/"
+>
+  <main>
+    <section class="delivery-page">
+      <div class="container">
+        <div class="center-head">
+          <h1>專屬您的鮮羊奶配送服務</h1>
+          <p>從牧場到餐桌，選擇一週配送瓶數與頻率，我們會用官方 Line 協助確認。</p>
+        </div>
+        <div class="delivery-grid">
+          <div class="steps">
+            <section>
+              <span>1</span>
+              <h2>選擇瓶數大小</h2>
+              <label class="plan active" data-plan="一次訂購三個月，享9折價" data-desc="每個月寄送6瓶，三個月共18瓶" data-price="平均每瓶 NT$200" data-total="NT$ 3,600">
+                <input type="radio" name="size" checked value="3month" />
+                <b>一次訂購三個月，享9折價</b>
+                <small>每個月寄送6瓶，三個月共18瓶</small>
+                <strong>平均每瓶 NT$200</strong>
+              </label>
+              <label class="plan" data-plan="一次訂購6個月，享85折價" data-desc="每個月寄送6瓶，六個月共36瓶" data-price="平均每瓶 NT$190" data-total="NT$ 6,840">
+                <input type="radio" name="size" value="6month" />
+                <b>一次訂購6個月，享85折價</b>
+                <small>每個月寄送6瓶，六個月共36瓶</small>
+                <strong>平均每瓶 NT$190</strong>
+              </label>
+            </section>
+            <section>
+              <span>2</span>
+              <h2>配送頻率</h2>
+              <div class="freq-grid">
+                <button class="active" type="button" data-frequency="每月配送">每月配送</button>
+                <button type="button" data-frequency="依客服確認">依客服確認</button>
+              </div>
+            </section>
+          </div>
+          <aside class="summary">
+            <h2>訂單摘要</h2>
+            <div><span>方案</span><b data-summary-plan>一次訂購三個月，享9折價</b></div>
+            <div><span>瓶數</span><b data-summary-desc>每個月寄送6瓶，三個月共18瓶</b></div>
+            <div><span>配送頻率</span><b data-summary-frequency>每月配送</b></div>
+            <div><span>單瓶均價</span><b data-summary-price>平均每瓶 NT$200</b></div>
+            <hr />
+            <strong>方案總金額<em data-summary-total>NT$ 3,600</em></strong>
+            <p>正式訂購將透過官方 Line 確認配送地址、付款方式與可配送區域。</p>
+            <a class="button" href="/line/">確認訂閱</a>
+          </aside>
+        </div>
+        <section class="delivery-methods">
+          <div class="method-head">
+            <h2>配送方式與內容說明</h2>
+            <p>此區塊預留後續新增配送方式，可直接由資料欄位或 Notion 替換內容。</p>
+          </div>
+          <div class="method-grid">
+            {deliveryMethods.map((method) => (
+              <article>
+                <h3>{method.area}</h3>
+                <dl>
+                  <div><dt>配送日</dt><dd>{method.schedule}</dd></div>
+                  <div><dt>配送方式</dt><dd>{method.method}</dd></div>
+                  <div><dt>最低數量</dt><dd>{method.minimum}</dd></div>
+                </dl>
+                <p>{method.note}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<script>
+  const plans = Array.from(document.querySelectorAll(".plan"));
+  const frequencyButtons = Array.from(document.querySelectorAll(".freq-grid button"));
+  const summary = {
+    plan: document.querySelector("[data-summary-plan]"),
+    desc: document.querySelector("[data-summary-desc]"),
+    frequency: document.querySelector("[data-summary-frequency]"),
+    price: document.querySelector("[data-summary-price]"),
+    total: document.querySelector("[data-summary-total]")
+  };
+
+  function updateSummary(plan) {
+    summary.plan.textContent = plan.dataset.plan ?? "";
+    summary.desc.textContent = plan.dataset.desc ?? "";
+    summary.price.textContent = plan.dataset.price ?? "";
+    summary.total.textContent = plan.dataset.total ?? "";
+  }
+
+  plans.forEach((plan) => {
+    plan.addEventListener("click", () => {
+      plans.forEach((item) => item.classList.remove("active"));
+      plan.classList.add("active");
+      plan.querySelector("input").checked = true;
+      updateSummary(plan);
+    });
+  });
+
+  frequencyButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      frequencyButtons.forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      summary.frequency.textContent = button.dataset.frequency ?? "";
+    });
+  });
+</script>
+
+<style>
+  .delivery-page {
+    min-height: 760px;
+    margin-top: -82px;
+    padding: 144px 0 86px;
+    background: linear-gradient(180deg, #fff8f3, #fff4e6);
+  }
+
+  .center-head {
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    line-height: 1.1;
+  }
+
+  .center-head p {
+    color: rgba(62, 54, 46, 0.72);
+  }
+
+  .delivery-grid {
+    display: grid;
+    grid-template-columns: 1fr 0.86fr;
+    gap: 34px;
+    max-width: 860px;
+    margin: 42px auto 0;
+  }
+
+  .steps {
+    display: grid;
+    gap: 28px;
+  }
+
+  section > span {
+    display: inline-grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-primary);
+    font-weight: 900;
+  }
+
+  h2 {
+    margin: 10px 0 14px;
+    font-size: 1.35rem;
+  }
+
+  .plan {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px 14px;
+    align-items: center;
+    border: 2px solid rgba(130, 117, 97, 0.16);
+    border-radius: 16px;
+    padding: 16px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .plan + .plan {
+    margin-top: 12px;
+  }
+
+  .plan.active {
+    border-color: var(--color-primary);
+    background: #fff1d8;
+  }
+
+  .plan small {
+    grid-column: 2 / 3;
+    color: rgba(62, 54, 46, 0.62);
+  }
+
+  .plan strong {
+    color: var(--color-primary-strong);
+    text-align: right;
+  }
+
+  .freq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .freq-grid button {
+    border: 2px solid var(--color-primary);
+    border-radius: 14px;
+    padding: 16px;
+    background: #fff;
+    font-weight: 900;
+  }
+
+  .freq-grid button.active {
+    background: #fff1d8;
+  }
+
+  .summary {
+    border-radius: 24px;
+    padding: 28px;
+    background: #f5dfbc;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .summary div,
+  .summary strong {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin: 12px 0;
+  }
+
+  .summary span,
+  .summary p {
+    color: rgba(62, 54, 46, 0.66);
+  }
+
+  .summary em {
+    color: var(--color-primary-strong);
+    font-size: 1.7rem;
+    font-style: normal;
+  }
+
+  .summary .button {
+    width: 100%;
+  }
+
+  .delivery-methods {
+    max-width: 860px;
+    margin: 42px auto 0;
+    border-radius: 24px;
+    padding: 30px;
+    background: rgba(255, 248, 243, 0.88);
+    box-shadow: 0 10px 28px rgba(62, 54, 46, 0.08);
+  }
+
+  .method-head h2 {
+    margin: 0 0 8px;
+    color: var(--color-primary-strong);
+    font-size: 1.55rem;
+  }
+
+  .method-head p {
+    margin: 0;
+    color: rgba(62, 54, 46, 0.66);
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .method-grid article {
+    border: 1px solid rgba(130, 117, 97, 0.14);
+    border-radius: 18px;
+    padding: 20px;
+    background: #fff;
+  }
+
+  .method-grid h3 {
+    margin: 0 0 14px;
+    color: var(--color-primary-strong);
+    font-size: 1.25rem;
+  }
+
+  dl {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  dt {
+    color: rgba(62, 54, 46, 0.58);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 900;
+    text-align: right;
+  }
+
+  .method-grid p {
+    margin: 14px 0 0;
+    color: rgba(62, 54, 46, 0.66);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 820px) {
+    .delivery-grid,
+    .method-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

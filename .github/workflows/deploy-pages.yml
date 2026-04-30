@@ -1,0 +1,65 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+        env:
+          ASTRO_OUTPUT: static
+          ASTRO_TELEMETRY_DISABLED: 1
+          NOTION_PRODUCT_DB_ID: ${{ secrets.NOTION_PRODUCT_DB_ID }}
+          NOTION_BRAND_DB_ID: ${{ secrets.NOTION_BRAND_DB_ID }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          PUBLIC_SITE_URL: https://jacob-cloud-n8n.github.io
+          PUBLIC_LINE_URL: ${{ vars.PUBLIC_LINE_URL }}
+          PUBLIC_NAVIGATION_NAME: ${{ vars.PUBLIC_NAVIGATION_NAME }}
+          PUBLIC_NAVIGATION_ADDRESS: ${{ vars.PUBLIC_NAVIGATION_ADDRESS }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
