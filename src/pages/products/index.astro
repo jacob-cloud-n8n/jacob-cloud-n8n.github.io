@@ -30,8 +30,9 @@ const sweets = products.filter((product) => product.category === "甜點");
           <h2>{copyText(pageCopy, "products.fresh.title", "鮮乳系列")}</h2>
           <p>{copyText(pageCopy, "products.fresh.description", "低溫殺菌，保留最完整的營養與活性分子，醇厚卻清爽。")}</p>
           <div class="mini-grid">
-            {fresh.slice(0, 2).map((product) => (
+            {fresh.map((product) => (
               <a href="/delivery/">
+                <img src={product.image} alt={product.name} width="240" height="180" loading="lazy" />
                 <strong>{product.name}</strong>
                 <small>{product.desc}</small>
                 <b>NT$ {product.price}</b>
@@ -44,6 +45,7 @@ const sweets = products.filter((product) => product.category === "甜點");
           <p>{copyText(pageCopy, "products.sweets.description", "天然羊奶入料，細滑香Q的極致口感。")}</p>
           {sweets.map((product) => (
             <a href="/delivery/">
+              <img src={product.image} alt={product.name} width="180" height="150" loading="lazy" />
               <span>{product.name}</span>
               <b>NT$ {product.price}</b>
             </a>
@@ -162,6 +164,14 @@ const sweets = products.filter((product) => product.category === "甜點");
     background: rgba(255, 255, 255, 0.78);
   }
 
+  .mini-grid img,
+  .sweet-panel img {
+    width: 100%;
+    height: 136px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
   small {
     color: rgba(62, 54, 46, 0.64);
   }
@@ -171,8 +181,13 @@ const sweets = products.filter((product) => product.category === "甜點");
   }
 
   .sweet-panel a {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 86px 1fr auto;
+    align-items: center;
     margin-top: 12px;
+  }
+
+  .sweet-panel img {
+    height: 72px;
   }
 
   .image-field {

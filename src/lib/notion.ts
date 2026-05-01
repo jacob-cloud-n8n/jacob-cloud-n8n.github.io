@@ -41,6 +41,22 @@ function selectName(prop: any): string {
   return prop?.select?.name ?? "";
 }
 
+function firstText(props: Record<string, any>, names: string[], reader: (prop: any) => string): string {
+  for (const name of names) {
+    const value = reader(props[name]);
+    if (value) return value;
+  }
+  return "";
+}
+
+function firstFile(props: Record<string, any>, names: string[]): string {
+  for (const name of names) {
+    const value = fileUrl(props[name]);
+    if (value) return value;
+  }
+  return "";
+}
+
 function slugify(value: string): string {
   return value
     .trim()
@@ -59,13 +75,36 @@ function textList(value: string): string[] {
 function productCategory(value: string): Product["category"] {
   const aliases: Record<string, Product["category"]> = {
     鮮奶: "鮮乳",
+    鮮乳系列: "鮮乳",
+    甜點系列: "甜點",
     特調: "特調飲品"
   };
   if (aliases[value]) return aliases[value];
   return productCategories.has(value) ? (value as Product["category"]) : "鮮乳";
 }
 
-async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage) => T): Promise<T[]> {
+function milestoneFromChineseContent(page: NotionPage, order: number): BrandEntry | null {
+  const props = page.properties ?? {};
+  const rawTitle = titleText(props["品牌說明"]);
+  const content = richText(props["內容"]) || richText(props["文字"]);
+  const isMilestoneRow = rawTitle.includes("大事記") || (!rawTitle && Boolean(content));
+  if (!isMilestoneRow || !content) return null;
+
+  const lines = content.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const firstLine = lines[0] ?? rawTitle;
+  const detail = lines.slice(1).join("\n") || content;
+
+  return {
+    title: firstLine || rawTitle || `小牧人大事記 ${order + 1}`,
+    type: "大事記",
+    date: "",
+    richContent: detail || content,
+    image: fileUrl(props["店面圖片"]) || "/images/goat-field.webp",
+    order
+  };
+}
+
+async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, index: number) => T): Promise<T[]> {
   const token = import.meta.env.NOTION_TOKEN;
   if (!token || !databaseId) return [];
 
@@ -91,17 +130,19 @@ export async function getProducts(): Promise<Product[]> {
   try {
     const products = await queryDatabase<Product>(import.meta.env.NOTION_PRODUCT_DB_ID || defaultProductDatabaseId, (page) => {
       const props = page.properties ?? {};
+      const name = firstText(props, ["Name", "產品名稱"], titleText);
       return {
-        name: titleText(props.Name),
-        price: Number(props.Price?.number ?? 0),
-        category: productCategory(props.Category?.select?.name ?? "鮮乳"),
-        image: fileUrl(props.Cover) || "/images/product-board.webp",
-        desc: richText(props.Description),
-        isActive: Boolean(props.IsActive?.checkbox)
+        name,
+        price: Number(props.Price?.number ?? props["產品價格"]?.number ?? 0),
+        category: productCategory(props.Category?.select?.name ?? props["產品分類"]?.select?.name ?? "鮮乳"),
+        image: firstFile(props, ["Cover", "產品照片"]) || "/images/product-board.webp",
+        desc: firstText(props, ["Description", "產品簡介"], richText),
+        isActive: props.IsActive?.checkbox ?? props["上架狀況"]?.checkbox ?? true
       };
     });
-    const activeProducts = products.filter((product) => product.isActive && product.name);
-    return activeProducts.length > 0 ? activeProducts : fallbackProducts;
+    const namedProducts = products.filter((product) => product.name);
+    const activeProducts = namedProducts.filter((product) => product.isActive);
+    return activeProducts.length > 0 ? activeProducts : namedProducts.length > 0 ? namedProducts : fallbackProducts;
   } catch (error) {
     console.warn(error);
     return fallbackProducts;
@@ -110,15 +151,15 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getBrandContent(fallback: BrandEntry[] = fallbackBrandEntries): Promise<BrandEntry[]> {
   try {
-    const entries = await queryDatabase<BrandEntry>(import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, (page) => {
+    const entries = await queryDatabase<BrandEntry>(import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, (page, index) => {
       const props = page.properties ?? {};
       return {
-        title: titleText(props.Title),
+        title: firstText(props, ["Title", "品牌說明"], titleText),
         type: props.Type?.select?.name ?? "品牌介紹",
         date: props.Date?.date?.start ?? "",
-        richContent: richText(props.RichContent),
-        image: fileUrl(props.Cover) || fileUrl(props.Image),
-        order: Number(props.Order?.number ?? 0)
+        richContent: firstText(props, ["RichContent", "內容", "文字"], richText),
+        image: firstFile(props, ["Cover", "Image", "店面圖片"]),
+        order: Number(props.Order?.number ?? index)
       };
     });
     const cleanEntries = entries.filter((entry) => entry.title).sort((a, b) => a.order - b.order);
@@ -130,9 +171,44 @@ export async function getBrandContent(fallback: BrandEntry[] = fallbackBrandEntr
 }
 
 export async function getMilestones(): Promise<BrandEntry[]> {
-  const entries = await getBrandContent(milestoneEntries);
-  const milestones = entries.filter((entry) => entry.type === "大事記");
-  return milestones.length > 0 ? milestones : milestoneEntries;
+  try {
+    const pages = await queryDatabase<NotionPage>(import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, (page) => page);
+    const milestones: BrandEntry[] = [];
+    let inChineseMilestoneSection = false;
+
+    pages.forEach((page, index) => {
+      const props = page.properties ?? {};
+      const rawTitle = titleText(props["品牌說明"]);
+      if (rawTitle.includes("小牧人大事記")) {
+        inChineseMilestoneSection = true;
+      } else if (inChineseMilestoneSection && rawTitle) {
+        inChineseMilestoneSection = false;
+      }
+
+      if (inChineseMilestoneSection) {
+        const chineseMilestone = milestoneFromChineseContent(page, index);
+        if (chineseMilestone) milestones.push(chineseMilestone);
+        return;
+      }
+
+      if (props.Type?.select?.name === "大事記") {
+        milestones.push({
+          title: titleText(props.Title),
+          type: "大事記",
+          date: props.Date?.date?.start ?? "",
+          richContent: richText(props.RichContent),
+          image: fileUrl(props.Cover) || fileUrl(props.Image),
+          order: Number(props.Order?.number ?? index)
+        });
+      }
+    });
+
+    milestones.sort((a, b) => a.order - b.order);
+    return milestones.length > 0 ? milestones : milestoneEntries;
+  } catch (error) {
+    console.warn(error);
+    return milestoneEntries;
+  }
 }
 
 export async function getNews(): Promise<NewsItem[]> {
