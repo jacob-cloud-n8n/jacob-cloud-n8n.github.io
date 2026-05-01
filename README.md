@@ -31,18 +31,18 @@ pnpm run dev
 - `NOTION_BRAND_DB_ID`
 - `NOTION_NEWS_DB_ID`
 - `NOTION_DELIVERY_DB_ID`
+- `NOTION_ORDER_DB_ID`
 - `PUBLIC_SITE_URL`
 - `PUBLIC_LINE_URL`
 - `PUBLIC_NAVIGATION_NAME`
 - `PUBLIC_NAVIGATION_ADDRESS`
 - `N8N_REDEPLOY_WEBHOOK`
-- `N8N_ORDER_WEBHOOK_URL`
 
 首頁「導航到小牧人羊奶」會使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 組成 Google 地圖搜尋連結。市集活動時只要更新地址即可切換導航目的地。
 
 Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料，不會把 Notion 原始 JSON 傳到前端。
 
-配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `N8N_ORDER_WEBHOOK_URL`，訂單會由網站後端轉送到 n8n；若未設定，系統會開啟 Line 訊息備援，讓顧客手動送出。
+配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `NOTION_ORDER_DB_ID`，訂單會由網站後端寫入 Notion「訂單資訊」資料庫，後續通知 Line 由 Notion/n8n 自動化處理。若 Notion 寫入失敗，系統會開啟 Line 訊息備援，讓顧客手動送出。
 
 ## Notion Schema
 
@@ -88,6 +88,18 @@ Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料�
 ### Delivery_DB
 
 可選。若設定 `NOTION_DELIVERY_DB_ID`，配送方式會由此資料庫讀取：`Area`、`Schedule`、`Method`、`Minimum`、`Note`、`IsActive`。
+
+### Order_DB
+
+訂單送出後會寫入 `NOTION_ORDER_DB_ID` 指定的 Notion 資料庫。小牧人目前使用「訂單資訊」資料庫：
+
+| 屬性 | 型別 | 用途 |
+| --- | --- | --- |
+| 姓名 | Title | 顧客姓名 |
+| 電話 | Text | 聯絡電話 |
+| 7-11取貨門市 | Text | 配送地點或配送門市 |
+| 備註 | Text | 方案、頻率、配送方式與顧客備註 |
+| 狀態 | Status | 預設寫入「新訂單」 |
 
 ## 圖片
 
