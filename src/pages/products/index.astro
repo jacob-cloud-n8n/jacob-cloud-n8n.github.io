@@ -46,7 +46,10 @@ const sweets = products.filter((product) => product.category === "甜點");
           {sweets.map((product) => (
             <a href="/delivery/">
               <img src={product.image} alt={product.name} width="180" height="150" loading="lazy" />
-              <span>{product.name}</span>
+              <span>
+                <strong>{product.name}</strong>
+                <small>{product.desc}</small>
+              </span>
               <b>NT$ {product.price}</b>
             </a>
           ))}
@@ -184,6 +187,11 @@ const sweets = products.filter((product) => product.category === "甜點");
     grid-template-columns: 86px 1fr auto;
     align-items: center;
     margin-top: 12px;
+  }
+
+  .sweet-panel span {
+    display: grid;
+    gap: 4px;
   }
 
   .sweet-panel img {
