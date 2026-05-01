@@ -1,6 +1,10 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { deliveryMethods } from "@lib/content";
+import { getDeliveryMethods, getPageCopy } from "@lib/notion";
+import { copyText } from "@lib/page-copy";
+
+const pageCopy = await getPageCopy();
+const deliveryMethods = await getDeliveryMethods();
 ---
 
 <MainLayout
@@ -12,8 +16,8 @@ import { deliveryMethods } from "@lib/content";
     <section class="delivery-page">
       <div class="container">
         <div class="center-head">
-          <h1>專屬您的鮮羊奶配送服務</h1>
-          <p>從牧場到餐桌，選擇一週配送瓶數與頻率，我們會用官方 Line 協助確認。</p>
+          <h1>{copyText(pageCopy, "delivery.hero.title", "專屬您的鮮羊奶配送服務")}</h1>
+          <p>{copyText(pageCopy, "delivery.hero.description", "從牧場到餐桌，選擇一週配送瓶數與頻率，我們會用官方 Line 協助確認。")}</p>
         </div>
         <div class="delivery-grid">
           <div class="steps">
@@ -51,13 +55,13 @@ import { deliveryMethods } from "@lib/content";
             <hr />
             <strong>方案總金額<em data-summary-total>NT$ 3,600</em></strong>
             <p>正式訂購將透過官方 Line 確認配送地址、付款方式與可配送區域。</p>
-            <a class="button" href="/line/">確認訂閱</a>
+            <a class="button" href="/order/?plan=3month&frequency=%E6%AF%8F%E6%9C%88%E9%85%8D%E9%80%81" data-order-link>確認訂閱</a>
           </aside>
         </div>
         <section class="delivery-methods">
           <div class="method-head">
-            <h2>配送方式與內容說明</h2>
-            <p>此區塊預留後續新增配送方式，可直接由資料欄位或 Notion 替換內容。</p>
+            <h2>{copyText(pageCopy, "delivery.methods.title", "配送方式與內容說明")}</h2>
+            <p>{copyText(pageCopy, "delivery.methods.description", "此區塊預留後續新增配送方式，可直接由資料欄位或 Notion 替換內容。")}</p>
           </div>
           <div class="method-grid">
             {deliveryMethods.map((method) => (
@@ -88,12 +92,23 @@ import { deliveryMethods } from "@lib/content";
     price: document.querySelector("[data-summary-price]"),
     total: document.querySelector("[data-summary-total]")
   };
+  const orderLink = document.querySelector("[data-order-link]");
+
+  function updateOrderLink() {
+    const activePlanInput = document.querySelector(".plan.active input");
+    const params = new URLSearchParams({
+      plan: activePlanInput?.value ?? "3month",
+      frequency: summary.frequency.textContent ?? "每月配送"
+    });
+    orderLink.href = `/order/?${params.toString()}`;
+  }
 
   function updateSummary(plan) {
     summary.plan.textContent = plan.dataset.plan ?? "";
     summary.desc.textContent = plan.dataset.desc ?? "";
     summary.price.textContent = plan.dataset.price ?? "";
     summary.total.textContent = plan.dataset.total ?? "";
+    updateOrderLink();
   }
 
   plans.forEach((plan) => {
@@ -110,8 +125,11 @@ import { deliveryMethods } from "@lib/content";
       frequencyButtons.forEach((item) => item.classList.remove("active"));
       button.classList.add("active");
       summary.frequency.textContent = button.dataset.frequency ?? "";
+      updateOrderLink();
     });
   });
+
+  updateOrderLink();
 </script>
 
 <style>

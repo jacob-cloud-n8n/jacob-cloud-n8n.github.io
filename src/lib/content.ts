@@ -9,12 +9,17 @@ export type Product = {
 
 export type BrandEntry = {
   title: string;
-  type: "品牌介紹" | "大事記" | "最新消息";
+  type: "品牌介紹" | "大事記" | "最新消息" | "頁面文案";
   date: string;
   richContent: string;
   image?: string;
   order: number;
 };
+
+export type PageCopy = Record<string, {
+  text: string;
+  image?: string;
+}>;
 
 export type NewsItem = {
   slug: string;

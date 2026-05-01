@@ -1,6 +1,10 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { fallbackNews } from "@lib/content";
+import { getNews, getPageCopy } from "@lib/notion";
+import { copyText } from "@lib/page-copy";
+
+const pageCopy = await getPageCopy();
+const news = await getNews();
 ---
 
 <MainLayout
@@ -12,12 +16,12 @@ import { fallbackNews } from "@lib/content";
     <section class="news-list-page">
       <div class="container">
         <div class="news-head">
-          <span>News</span>
-          <h1>最新消息</h1>
-          <p>新品、牧場日誌、配送公告與限定優惠都會集中在這裡，也可由 Notion 後台替換圖文內容。</p>
+          <span>{copyText(pageCopy, "news.hero.badge", "News")}</span>
+          <h1>{copyText(pageCopy, "news.hero.title", "最新消息")}</h1>
+          <p>{copyText(pageCopy, "news.hero.description", "新品、牧場日誌、配送公告與限定優惠都會集中在這裡，也可由 Notion 後台替換圖文內容。")}</p>
         </div>
         <div class="news-list">
-          {fallbackNews.map((item) => (
+          {news.map((item) => (
             <a class="news-item" href={`/news/${item.slug}/`}>
               <img src={item.image} alt={item.title} width="360" height="240" loading="lazy" />
               <div>

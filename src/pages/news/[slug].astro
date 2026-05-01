@@ -1,11 +1,12 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { fallbackNews } from "@lib/content";
+import { getNews } from "@lib/notion";
 
 export const prerender = true;
 
-export function getStaticPaths() {
-  return fallbackNews.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+export async function getStaticPaths() {
+  const news = await getNews();
+  return news.map((item) => ({ params: { slug: item.slug }, props: { item } }));
 }
 
 const { item } = Astro.props;

@@ -1,7 +1,9 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { getProducts } from "@lib/notion";
+import { getPageCopy, getProducts } from "@lib/notion";
+import { copyImage, copyText } from "@lib/page-copy";
 
+const pageCopy = await getPageCopy();
 const products = await getProducts();
 const fresh = products.filter((product) => product.category === "鮮乳" || product.category === "優酪乳");
 const drinks = products.filter((product) => product.category === "特調飲品");
@@ -16,17 +18,17 @@ const sweets = products.filter((product) => product.category === "甜點");
   <main>
     <section class="section catalog-hero">
       <div class="container center-head">
-        <h1>純淨牧場的自然滋味</h1>
-        <p>從農場第一滴鮮羊乳開始，我們堅持職人手作，將牧場清新與溫潤轉化為餐桌上的健康美味。</p>
+        <h1>{copyText(pageCopy, "products.hero.title", "純淨牧場的自然滋味")}</h1>
+        <p>{copyText(pageCopy, "products.hero.description", "從農場第一滴鮮羊乳開始，我們堅持職人手作，將牧場清新與溫潤轉化為餐桌上的健康美味。")}</p>
       </div>
     </section>
 
     <section class="catalog-section">
       <div class="container catalog-layout">
         <article class="fresh-panel">
-          <span>皇室首選</span>
-          <h2>鮮乳系列</h2>
-          <p>低溫殺菌，保留最完整的營養與活性分子，醇厚卻清爽。</p>
+          <span>{copyText(pageCopy, "products.fresh.badge", "皇室首選")}</span>
+          <h2>{copyText(pageCopy, "products.fresh.title", "鮮乳系列")}</h2>
+          <p>{copyText(pageCopy, "products.fresh.description", "低溫殺菌，保留最完整的營養與活性分子，醇厚卻清爽。")}</p>
           <div class="mini-grid">
             {fresh.slice(0, 2).map((product) => (
               <a href="/delivery/">
@@ -38,8 +40,8 @@ const sweets = products.filter((product) => product.category === "甜點");
           </div>
         </article>
         <aside class="sweet-panel">
-          <h2>甜點系列</h2>
-          <p>天然羊奶入料，細滑香Q的極致口感。</p>
+          <h2>{copyText(pageCopy, "products.sweets.title", "甜點系列")}</h2>
+          <p>{copyText(pageCopy, "products.sweets.description", "天然羊奶入料，細滑香Q的極致口感。")}</p>
           {sweets.map((product) => (
             <a href="/delivery/">
               <span>{product.name}</span>
@@ -53,7 +55,7 @@ const sweets = products.filter((product) => product.category === "甜點");
 
     <section class="section">
       <div class="container drink-panel">
-        <h2>特調飲品</h2>
+        <h2>{copyText(pageCopy, "products.drinks.title", "特調飲品")}</h2>
         <div class="drink-grid">
           {drinks.map((product) => (
             <a href="/delivery/">
@@ -69,11 +71,11 @@ const sweets = products.filter((product) => product.category === "甜點");
     <section class="section delivery-note">
       <div class="container note-card">
         <div>
-          <h2>每日牧場直送</h2>
-          <p>我們相信，只有快樂的羊，才能生產出最好的羊奶。小牧人與在地小農合作，確保每一滴羊奶都源自自然放牧、草飼餵養的健康羊群。</p>
-          <strong>通過 12 道嚴格品管檢驗</strong>
+          <h2>{copyText(pageCopy, "products.note.title", "每日牧場直送")}</h2>
+          <p>{copyText(pageCopy, "products.note.description", "我們相信，只有快樂的羊，才能生產出最好的羊奶。小牧人與在地小農合作，確保每一滴羊奶都源自自然放牧、草飼餵養的健康羊群。")}</p>
+          <strong>{copyText(pageCopy, "products.note.badge", "通過 12 道嚴格品管檢驗")}</strong>
         </div>
-        <img src="/images/goat-field.webp" alt="每日牧場直送" width="600" height="420" loading="lazy" />
+        <img src={copyImage(pageCopy, "products.note.image", "/images/goat-field.webp")} alt="每日牧場直送" width="600" height="420" loading="lazy" />
       </div>
     </section>
   </main>

@@ -1,7 +1,9 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { getMilestones } from "@lib/notion";
+import { getMilestones, getPageCopy } from "@lib/notion";
+import { copyImage, copyText } from "@lib/page-copy";
 
+const pageCopy = await getPageCopy();
 const milestoneEntries = await getMilestones();
 ---
 
@@ -14,26 +16,26 @@ const milestoneEntries = await getMilestones();
     <section class="story-hero">
       <div class="container story-grid">
         <div>
-          <span class="pill">One Day</span>
-          <h1>牧場到餐桌的<br />鮮純承諾</h1>
-          <p>從凌晨處理鮮乳，到光復新村的日常服務，小牧人的故事是一段把純淨風味帶給更多家庭的旅程。</p>
+          <span class="pill">{copyText(pageCopy, "milestones.hero.badge", "One Day")}</span>
+          <h1 set:html={copyText(pageCopy, "milestones.hero.title", "牧場到餐桌的<br />鮮純承諾")}></h1>
+          <p>{copyText(pageCopy, "milestones.hero.description", "從凌晨處理鮮乳，到光復新村的日常服務，小牧人的故事是一段把純淨風味帶給更多家庭的旅程。")}</p>
         </div>
-        <img src="/images/goat-field.webp" alt="陽光牧場中的山羊" width="640" height="480" />
+        <img src={copyImage(pageCopy, "milestones.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的山羊" width="640" height="480" />
       </div>
     </section>
 
     <section class="belief">
       <div class="container">
-        <span class="eyebrow">Brand Philosophy</span>
-        <h2>「新鮮」是我們唯一的堅持</h2>
+        <span class="eyebrow">{copyText(pageCopy, "milestones.belief.badge", "Brand Philosophy")}</span>
+        <h2>{copyText(pageCopy, "milestones.belief.title", "「新鮮」是我們唯一的堅持")}</h2>
         <div class="belief-grid">
           <article>
-            <strong>當天製備</strong>
-            <p>每天凌晨開始處理鮮乳，縮短從牧場到餐桌的時間。</p>
+            <strong>{copyText(pageCopy, "milestones.belief.1.title", "當天製備")}</strong>
+            <p>{copyText(pageCopy, "milestones.belief.1.description", "每天凌晨開始處理鮮乳，縮短從牧場到餐桌的時間。")}</p>
           </article>
           <article>
-            <strong>純粹無添加</strong>
-            <p>以低溫殺菌保留營養與清爽口感，喝得到原始風味。</p>
+            <strong>{copyText(pageCopy, "milestones.belief.2.title", "純粹無添加")}</strong>
+            <p>{copyText(pageCopy, "milestones.belief.2.description", "以低溫殺菌保留營養與清爽口感，喝得到原始風味。")}</p>
           </article>
         </div>
       </div>
@@ -42,8 +44,8 @@ const milestoneEntries = await getMilestones();
     <section class="section">
       <div class="container">
         <div class="center-head">
-          <h2>小牧人的足跡</h2>
-          <p>一步一步，從牧場走進光復新村與更多家庭。</p>
+          <h2>{copyText(pageCopy, "milestones.list.title", "小牧人的足跡")}</h2>
+          <p>{copyText(pageCopy, "milestones.list.description", "一步一步，從牧場走進光復新村與更多家庭。")}</p>
         </div>
         <div class="milestone-list">
           {milestoneEntries.map((entry, index) => (

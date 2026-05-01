@@ -1,11 +1,12 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
-import { fallbackNews } from "@lib/content";
-import { getProducts } from "@lib/notion";
+import { getNews, getPageCopy, getProducts } from "@lib/notion";
+import { copyImage, copyText } from "@lib/page-copy";
 import { siteNavigation } from "@lib/site";
 
+const pageCopy = await getPageCopy();
 const products = (await getProducts()).slice(0, 3);
-const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
 ---
 
 <MainLayout
@@ -17,19 +18,19 @@ const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)
     <section class="home-hero">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <span class="pill">清晨鮮奶直送，讓人安心的風味</span>
-          <h1>讓每一口鮮乳<br />都充滿陽光的溫度</h1>
-          <p>「小牧人」不只是品牌，更是對土地的承諾。在清晨的露水與金色陽光中，為您的家人遞上一瓶最純粹的營養。</p>
+          <span class="pill">{copyText(pageCopy, "home.hero.pill", "清晨鮮奶直送，讓人安心的風味")}</span>
+          <h1 set:html={copyText(pageCopy, "home.hero.title", "讓每一口鮮乳<br />都充滿陽光的溫度")}></h1>
+          <p>{copyText(pageCopy, "home.hero.description", "「小牧人」不只是品牌，更是對土地的承諾。在清晨的露水與金色陽光中，為您的家人遞上一瓶最純粹的營養。")}</p>
           <div class="cta-row">
             <a class="button" href="/delivery/">立即訂購</a>
             <a class="button secondary" href="/line/">加入官方 line</a>
           </div>
         </div>
         <div class="hero-card">
-          <img src="/images/goat-field.webp" alt="陽光牧場中的小羊" width="720" height="720" />
+          <img src={copyImage(pageCopy, "home.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的小羊" width="720" height="720" />
           <div class="rating-card">
-            <strong>100% 天然</strong>
-            <span>牧場冷鏈直送，守護鮮乳純淨風味。</span>
+            <strong>{copyText(pageCopy, "home.hero.badgeTitle", "100% 天然")}</strong>
+            <span>{copyText(pageCopy, "home.hero.badgeText", "牧場冷鏈直送，守護鮮乳純淨風味。")}</span>
           </div>
         </div>
       </div>
@@ -38,7 +39,7 @@ const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)
     <section class="section news-band">
       <div class="container">
         <div class="center-head">
-          <h2>最新消息</h2>
+            <h2>{copyText(pageCopy, "home.news.title", "最新消息")}</h2>
         </div>
         <div class="news-grid">
           {latestNews.map((item) => (
@@ -57,8 +58,8 @@ const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)
       <div class="container">
         <div class="split-head">
           <div>
-            <h2>精選牧人風味</h2>
-            <p>讓每日鮮乳、優酪乳與手作甜點，成為餐桌上的小小期待。</p>
+            <h2>{copyText(pageCopy, "home.products.title", "精選牧人風味")}</h2>
+            <p>{copyText(pageCopy, "home.products.description", "讓每日鮮乳、優酪乳與手作甜點，成為餐桌上的小小期待。")}</p>
           </div>
           <a href="/products/">查看全部商品 →</a>
         </div>
@@ -87,8 +88,8 @@ const latestNews = [...fallbackNews].sort((a, b) => b.date.localeCompare(a.date)
 
     <section class="section subscribe-section">
       <div class="container subscribe-card">
-        <h2>現在訂閱，<br />開啟您的晨間牧場食光</h2>
-        <p>加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。</p>
+        <h2 set:html={copyText(pageCopy, "home.subscribe.title", "現在訂閱，<br />開啟您的晨間牧場食光")}></h2>
+        <p>{copyText(pageCopy, "home.subscribe.description", "加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。")}</p>
         <div class="subscribe-form">
           <input type="email" name="email" placeholder="Email / 電話輸入" aria-label="Email 或電話" />
           <a class="button" href={siteNavigation.googleMapsUrl} target="_blank" rel="noopener noreferrer">導航到小牧人羊奶</a>

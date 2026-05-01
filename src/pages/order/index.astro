@@ -1,0 +1,285 @@
+---
+import MainLayout from "@layouts/MainLayout.astro";
+import { getPageCopy } from "@lib/notion";
+import { copyText } from "@lib/page-copy";
+
+const pageCopy = await getPageCopy();
+const plan = Astro.url.searchParams.get("plan") ?? "3month";
+const frequency = Astro.url.searchParams.get("frequency") ?? "每月配送";
+const planLabels: Record<string, string> = {
+  "3month": "一次訂購三個月，享9折價",
+  "6month": "一次訂購6個月，享85折價"
+};
+---
+
+<MainLayout
+  title="填寫訂單｜小牧人羊奶配送訂閱"
+  description="填寫小牧人羊奶配送訂閱資料，留下姓名、電話、配送地址或門市後，由官方 Line 協助確認訂單。"
+  path="/order/"
+>
+  <main>
+    <section class="order-page">
+      <div class="container order-grid">
+        <div class="order-copy">
+          <span class="pill">{copyText(pageCopy, "order.hero.badge", "Order Form")}</span>
+          <h1>{copyText(pageCopy, "order.hero.title", "填寫訂單資料")}</h1>
+          <p>{copyText(pageCopy, "order.hero.description", "留下基本配送資訊後，系統會將訂單送到小牧人客服流程，後續由官方 Line 協助確認付款、配送區域與到貨時間。")}</p>
+          <div class="summary-card">
+            <b>已選方案</b>
+            <span data-selected-plan>{planLabels[plan] ?? planLabels["3month"]}</span>
+            <small data-selected-frequency>{frequency}</small>
+          </div>
+        </div>
+        <form class="order-form" data-order-form>
+          <input type="hidden" name="plan" value={plan} />
+          <input type="hidden" name="frequency" value={frequency} />
+
+          <label>
+            <span>姓名</span>
+            <input name="name" autocomplete="name" required placeholder="請輸入姓名" />
+          </label>
+
+          <label>
+            <span>電話</span>
+            <input name="phone" autocomplete="tel" inputmode="tel" required placeholder="09xx xxx xxx" />
+          </label>
+
+          <fieldset>
+            <legend>配送地點或配送門市</legend>
+            <label class="radio-row">
+              <input type="radio" name="deliveryType" value="配送地點" checked />
+              <span>配送地點</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="deliveryType" value="配送門市" />
+              <span>配送門市</span>
+            </label>
+          </fieldset>
+
+          <label>
+            <span>地址 / 門市名稱</span>
+            <textarea name="deliveryPlace" required rows="3" placeholder="例如：台中市區地址，或指定配送門市"></textarea>
+          </label>
+
+          <label>
+            <span>備註</span>
+            <textarea name="note" rows="3" placeholder="可填寫方便聯絡時間、希望配送日或其他需求"></textarea>
+          </label>
+
+          <button class="button" type="submit">送出並通知 Line</button>
+          <p class="form-status" data-form-status role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<script>
+  const form = document.querySelector("[data-order-form]");
+  const status = document.querySelector("[data-form-status]");
+
+  function lineFallbackUrl(payload) {
+    const message = [
+      "小牧人羊奶訂單",
+      `姓名：${payload.name || ""}`,
+      `電話：${payload.phone || ""}`,
+      `配送方式：${payload.deliveryType || ""}`,
+      `配送地點/門市：${payload.deliveryPlace || ""}`,
+      `方案：${document.querySelector("[data-selected-plan]")?.textContent?.trim() || ""}`,
+      `配送頻率：${payload.frequency || ""}`,
+      payload.note ? `備註：${payload.note}` : ""
+    ].filter(Boolean).join("\n");
+    return `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submitButton = form.querySelector("button[type='submit']");
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    status.textContent = "訂單送出中...";
+    submitButton.disabled = true;
+
+    try {
+      const response = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = response.headers.get("content-type")?.includes("application/json")
+        ? await response.json()
+        : { ok: false };
+
+      if (!response.ok || !result.ok) {
+        if (response.status === 404 || response.status === 405) {
+          window.open(lineFallbackUrl(payload), "_blank", "noopener,noreferrer");
+          status.textContent = "預覽版已建立 Line 訊息，請在 Line 中按下送出。";
+          return;
+        }
+        throw new Error(result.message || "訂單送出失敗。");
+      }
+
+      if (result.lineUrl) {
+        window.open(result.lineUrl, "_blank", "noopener,noreferrer");
+        status.textContent = "已建立 Line 訊息，請在 Line 中按下送出。";
+      } else {
+        status.textContent = "訂單已送出，我們會透過官方 Line 與您確認。";
+        form.reset();
+      }
+    } catch (error) {
+      window.open(lineFallbackUrl(payload), "_blank", "noopener,noreferrer");
+      status.textContent = "已建立 Line 訊息，請在 Line 中按下送出。";
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .order-page {
+    min-height: 760px;
+    margin-top: -82px;
+    padding: 148px 0 88px;
+    background: linear-gradient(120deg, #fff8f3, #fff0dc 56%, #f4f9ef);
+  }
+
+  .order-grid {
+    display: grid;
+    grid-template-columns: 0.86fr 1fr;
+    gap: 44px;
+    align-items: start;
+  }
+
+  .pill {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 8px 14px;
+    background: rgba(243, 178, 27, 0.18);
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  h1 {
+    margin: 18px 0 14px;
+    color: #3e2f12;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 1.06;
+  }
+
+  .order-copy p {
+    color: rgba(62, 54, 46, 0.72);
+    font-size: 1.08rem;
+  }
+
+  .summary-card,
+  .order-form {
+    border: 1px solid rgba(130, 117, 97, 0.12);
+    border-radius: 24px;
+    background: rgba(255, 248, 243, 0.94);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .summary-card {
+    display: grid;
+    gap: 8px;
+    margin-top: 30px;
+    padding: 24px;
+  }
+
+  .summary-card b,
+  .summary-card span {
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  .summary-card span {
+    font-size: 1.28rem;
+  }
+
+  .summary-card small {
+    color: rgba(62, 54, 46, 0.66);
+  }
+
+  .order-form {
+    display: grid;
+    gap: 18px;
+    padding: 30px;
+  }
+
+  label,
+  fieldset {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  label span,
+  legend {
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid rgba(130, 117, 97, 0.22);
+    border-radius: 14px;
+    padding: 13px 14px;
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  fieldset {
+    grid-template-columns: repeat(2, 1fr);
+    border: 0;
+    padding: 0;
+  }
+
+  legend {
+    grid-column: 1 / -1;
+    padding: 0;
+  }
+
+  .radio-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(130, 117, 97, 0.16);
+    border-radius: 14px;
+    padding: 13px;
+    background: #fff;
+  }
+
+  .radio-row input {
+    width: auto;
+  }
+
+  .order-form .button {
+    width: 100%;
+  }
+
+  .button:disabled {
+    cursor: wait;
+    filter: grayscale(0.2);
+    opacity: 0.72;
+  }
+
+  .form-status {
+    min-height: 28px;
+    margin: 0;
+    color: var(--color-primary-strong);
+    font-weight: 900;
+  }
+
+  @media (max-width: 820px) {
+    .order-grid,
+    fieldset {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

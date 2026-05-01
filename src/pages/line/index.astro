@@ -1,7 +1,10 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
+import { getPageCopy } from "@lib/notion";
+import { copyText } from "@lib/page-copy";
 
 const lineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@little-shepherd";
+const pageCopy = await getPageCopy();
 ---
 
 <MainLayout
@@ -13,24 +16,24 @@ const lineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@litt
     <section class="line-page">
       <div class="container">
         <div class="center-head">
-          <span class="pill">官方客服與訂購</span>
-          <h1>「加入小牧人官方 LINE，<br />開啟溫馨羊乳生活」</h1>
-          <p>即時掌握牧場新鮮事，享受一對一專屬服務。</p>
+          <span class="pill">{copyText(pageCopy, "line.hero.badge", "官方客服與訂購")}</span>
+          <h1 set:html={copyText(pageCopy, "line.hero.title", "「加入小牧人官方 LINE，<br />開啟溫馨羊乳生活」")}></h1>
+          <p>{copyText(pageCopy, "line.hero.description", "即時掌握牧場新鮮事，享受一對一專屬服務。")}</p>
         </div>
         <div class="line-grid">
           <article class="benefits">
-            <h2>加入會員好友</h2>
+            <h2>{copyText(pageCopy, "line.benefits.title", "加入會員好友")}</h2>
             <div>
-              <strong>快速掌握新品</strong>
-              <p>第一時間收到特調與甜點供應資訊。</p>
+              <strong>{copyText(pageCopy, "line.benefits.1.title", "快速掌握新品")}</strong>
+              <p>{copyText(pageCopy, "line.benefits.1.description", "第一時間收到特調與甜點供應資訊。")}</p>
             </div>
             <div>
-              <strong>訂單即時查詢</strong>
-              <p>詢問配送週期、到貨時間與付款方式。</p>
+              <strong>{copyText(pageCopy, "line.benefits.2.title", "訂單即時查詢")}</strong>
+              <p>{copyText(pageCopy, "line.benefits.2.description", "詢問配送週期、到貨時間與付款方式。")}</p>
             </div>
             <div>
-              <strong>專屬會員優惠</strong>
-              <p>不定期提供門市與週配優惠。</p>
+              <strong>{copyText(pageCopy, "line.benefits.3.title", "專屬會員優惠")}</strong>
+              <p>{copyText(pageCopy, "line.benefits.3.description", "不定期提供門市與週配優惠。")}</p>
             </div>
           </article>
           <article class="qr-panel">
