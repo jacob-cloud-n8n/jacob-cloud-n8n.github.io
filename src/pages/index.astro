@@ -27,7 +27,7 @@ const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)
           </div>
         </div>
         <div class="hero-card">
-          <img src={copyImage(pageCopy, "home.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的小羊" width="720" height="720" />
+          <img class="cms-image-cover" src={copyImage(pageCopy, "home.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的小羊" width="720" height="720" />
           <div class="rating-card">
             <strong>{copyText(pageCopy, "home.hero.badgeTitle", "100% 天然")}</strong>
             <span>{copyText(pageCopy, "home.hero.badgeText", "牧場冷鏈直送，守護鮮乳純淨風味。")}</span>
@@ -67,7 +67,7 @@ const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)
           {products.map((product) => (
             <article class="home-product-card">
               <div class="product-orb">
-                <img src={product.image} alt={product.name} width="260" height="260" loading="lazy" />
+                <img class="cms-image-cover" src={product.image} alt={product.name} width="260" height="260" loading="lazy" />
               </div>
               <h3>{product.name}</h3>
               <p>{product.desc}</p>

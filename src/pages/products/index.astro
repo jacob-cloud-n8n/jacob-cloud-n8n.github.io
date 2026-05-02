@@ -32,7 +32,7 @@ const sweets = products.filter((product) => product.category === "甜點");
           <div class="mini-grid">
             {fresh.map((product) => (
               <a href="/delivery/">
-                <img src={product.image} alt={product.name} width="240" height="180" loading="lazy" />
+                <img class="cms-image-cover" src={product.image} alt={product.name} width="240" height="180" loading="lazy" />
                 <strong>{product.name}</strong>
                 <small>{product.desc}</small>
                 <b>NT$ {product.price}</b>
@@ -45,7 +45,7 @@ const sweets = products.filter((product) => product.category === "甜點");
           <p>{copyText(pageCopy, "products.sweets.description", "天然羊奶入料，細滑香Q的極致口感。")}</p>
           {sweets.map((product) => (
             <a href="/delivery/">
-              <img src={product.image} alt={product.name} width="180" height="150" loading="lazy" />
+              <img class="cms-image-cover" src={product.image} alt={product.name} width="180" height="150" loading="lazy" />
               <span>
                 <strong>{product.name}</strong>
                 <small>{product.desc}</small>
@@ -80,7 +80,7 @@ const sweets = products.filter((product) => product.category === "甜點");
           <p>{copyText(pageCopy, "products.note.description", "我們相信，只有快樂的羊，才能生產出最好的羊奶。小牧人與在地小農合作，確保每一滴羊奶都源自自然放牧、草飼餵養的健康羊群。")}</p>
           <strong>{copyText(pageCopy, "products.note.badge", "通過 12 道嚴格品管檢驗")}</strong>
         </div>
-        <img src={copyImage(pageCopy, "products.note.image", "/images/goat-field.webp")} alt="每日牧場直送" width="600" height="420" loading="lazy" />
+        <img class="cms-image-cover" src={copyImage(pageCopy, "products.note.image", "/images/goat-field.webp")} alt="每日牧場直送" width="600" height="420" loading="lazy" />
       </div>
     </section>
   </main>

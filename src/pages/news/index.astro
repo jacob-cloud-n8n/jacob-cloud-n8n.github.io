@@ -23,7 +23,7 @@ const news = await getNews();
         <div class="news-list">
           {news.map((item) => (
             <a class="news-item" href={`/news/${item.slug}/`}>
-              <img src={item.image} alt={item.title} width="360" height="240" loading="lazy" />
+              <img class="cms-image-cover" src={item.image} alt={item.title} width="360" height="240" loading="lazy" />
               <div>
                 <span>{item.category}</span>
                 <time>{item.date}</time>

@@ -20,7 +20,7 @@ const milestoneEntries = await getMilestones();
           <h1 set:html={copyText(pageCopy, "milestones.hero.title", "牧場到餐桌的<br />鮮純承諾")}></h1>
           <p>{copyText(pageCopy, "milestones.hero.description", "從凌晨處理鮮乳，到光復新村的日常服務，小牧人的故事是一段把純淨風味帶給更多家庭的旅程。")}</p>
         </div>
-        <img src={copyImage(pageCopy, "milestones.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的山羊" width="640" height="480" />
+        <img class="cms-image-cover" src={copyImage(pageCopy, "milestones.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的山羊" width="640" height="480" />
       </div>
     </section>
 
@@ -55,7 +55,7 @@ const milestoneEntries = await getMilestones();
                 <h3>{entry.title}</h3>
                 <p>{entry.richContent}</p>
               </div>
-              <img src={entry.image ?? "/images/goat-field.webp"} alt={entry.title} width="560" height="360" loading="lazy" />
+              <img class="cms-image-cover" src={entry.image ?? "/images/goat-field.webp"} alt={entry.title} width="560" height="360" loading="lazy" />
             </article>
           ))}
         </div>

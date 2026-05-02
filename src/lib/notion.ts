@@ -15,10 +15,42 @@ const notionVersion = "2022-06-28";
 const defaultProductDatabaseId = "35089dd14f0a804480fad43c37044ef4";
 const defaultBrandDatabaseId = "35089dd14f0a80e199d0e0e1c9254815";
 const productCategories = new Set(["鮮乳", "優酪乳", "甜點", "特調飲品", "贈品"]);
+const defaultCacheSeconds = 60;
+
+type CacheEntry<T> = {
+  expiresAt: number;
+  value: T[];
+};
+
+const databaseCache = new Map<string, CacheEntry<any>>();
 
 type NotionPage = {
   properties?: Record<string, any>;
 };
+
+function cacheSeconds(): number {
+  const parsed = Number(import.meta.env.NOTION_CACHE_SECONDS ?? defaultCacheSeconds);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : defaultCacheSeconds;
+}
+
+function normalizePropertyName(value: string): string {
+  return value.replace(/[\s_\-：:()（）]/g, "").toLowerCase();
+}
+
+function propertyByNames(props: Record<string, any>, names: string[]): any {
+  for (const name of names) {
+    if (props[name]) return props[name];
+  }
+
+  const normalizedEntries = Object.entries(props).map(([key, value]) => [normalizePropertyName(key), value] as const);
+  for (const name of names) {
+    const normalizedName = normalizePropertyName(name);
+    const match = normalizedEntries.find(([key]) => key === normalizedName || key.includes(normalizedName));
+    if (match) return match[1];
+  }
+
+  return undefined;
+}
 
 function titleText(prop: any): string {
   return prop?.title?.map((item: any) => item.plain_text).join("") ?? "";
@@ -43,7 +75,7 @@ function selectName(prop: any): string {
 
 function firstText(props: Record<string, any>, names: string[], reader: (prop: any) => string): string {
   for (const name of names) {
-    const value = reader(props[name]);
+    const value = reader(propertyByNames(props, [name]));
     if (value) return value;
   }
   return "";
@@ -51,10 +83,42 @@ function firstText(props: Record<string, any>, names: string[], reader: (prop: a
 
 function firstFile(props: Record<string, any>, names: string[]): string {
   for (const name of names) {
-    const value = fileUrl(props[name]);
+    const value = fileUrl(propertyByNames(props, [name]));
     if (value) return value;
   }
   return "";
+}
+
+function firstNumber(props: Record<string, any>, names: string[], fallback = 0): number {
+  for (const name of names) {
+    const value = propertyByNames(props, [name])?.number;
+    if (typeof value === "number") return value;
+  }
+  return fallback;
+}
+
+function firstSelect(props: Record<string, any>, names: string[], fallback = ""): string {
+  for (const name of names) {
+    const value = selectName(propertyByNames(props, [name]));
+    if (value) return value;
+  }
+  return fallback;
+}
+
+function firstCheckbox(props: Record<string, any>, names: string[], fallback = true): boolean {
+  for (const name of names) {
+    const prop = propertyByNames(props, [name]);
+    if (typeof prop?.checkbox === "boolean") return prop.checkbox;
+  }
+  return fallback;
+}
+
+function firstDate(props: Record<string, any>, names: string[], fallback = ""): string {
+  for (const name of names) {
+    const value = propertyByNames(props, [name])?.date?.start;
+    if (value) return value;
+  }
+  return fallback;
 }
 
 function slugify(value: string): string {
@@ -107,6 +171,9 @@ function milestoneFromChineseContent(page: NotionPage, order: number): BrandEntr
 async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, index: number) => T): Promise<T[]> {
   const token = import.meta.env.NOTION_TOKEN;
   if (!token || !databaseId) return [];
+  const cacheKey = databaseId;
+  const cached = databaseCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return cached.value.map(mapper);
 
   const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
     method: "POST",
@@ -123,21 +190,29 @@ async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, i
   }
 
   const payload = await response.json();
-  return (payload.results ?? []).map(mapper);
+  const pages = payload.results ?? [];
+  const ttl = cacheSeconds();
+  if (ttl > 0) {
+    databaseCache.set(cacheKey, {
+      expiresAt: Date.now() + ttl * 1000,
+      value: pages
+    });
+  }
+  return pages.map(mapper);
 }
 
 export async function getProducts(): Promise<Product[]> {
   try {
     const products = await queryDatabase<Product>(import.meta.env.NOTION_PRODUCT_DB_ID || defaultProductDatabaseId, (page) => {
       const props = page.properties ?? {};
-      const name = firstText(props, ["Name", "產品名稱"], titleText);
+      const name = firstText(props, ["Name", "產品名稱", "商品名稱", "品名"], titleText);
       return {
         name,
-        price: Number(props.Price?.number ?? props["產品價格"]?.number ?? 0),
-        category: productCategory(props.Category?.select?.name ?? props["產品分類"]?.select?.name ?? "鮮乳"),
-        image: firstFile(props, ["Cover", "產品照片"]) || "/images/product-board.webp",
-        desc: firstText(props, ["Description", "產品簡介"], richText),
-        isActive: props.IsActive?.checkbox ?? props["上架狀況"]?.checkbox ?? true
+        price: firstNumber(props, ["Price", "產品價格", "售價", "金額"]),
+        category: productCategory(firstSelect(props, ["Category", "產品分類", "分類"], "鮮乳")),
+        image: firstFile(props, ["Cover", "Image", "產品照片", "商品圖片", "照片", "圖片"]) || "/images/product-board.webp",
+        desc: firstText(props, ["Description", "產品簡介", "商品介紹", "內容"], richText),
+        isActive: firstCheckbox(props, ["IsActive", "上架狀況", "上架", "啟用"], true)
       };
     });
     const namedProducts = products.filter((product) => product.name);
@@ -154,12 +229,12 @@ export async function getBrandContent(fallback: BrandEntry[] = fallbackBrandEntr
     const entries = await queryDatabase<BrandEntry>(import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, (page, index) => {
       const props = page.properties ?? {};
       return {
-        title: firstText(props, ["Title", "品牌說明"], titleText),
-        type: props.Type?.select?.name ?? "品牌介紹",
-        date: props.Date?.date?.start ?? "",
-        richContent: firstText(props, ["RichContent", "內容", "文字"], richText),
-        image: firstFile(props, ["Cover", "Image", "店面圖片"]),
-        order: Number(props.Order?.number ?? index)
+        title: firstText(props, ["Title", "品牌說明", "標題", "名稱"], titleText),
+        type: firstSelect(props, ["Type", "類型", "分類"], "品牌介紹") as BrandEntry["type"],
+        date: firstDate(props, ["Date", "日期", "時間"]),
+        richContent: firstText(props, ["RichContent", "Content", "內容", "文字"], richText),
+        image: firstFile(props, ["Cover", "Image", "店面圖片", "圖片", "照片"]),
+        order: firstNumber(props, ["Order", "排序", "順序"], index)
       };
     });
     const cleanEntries = entries.filter((entry) => entry.title).sort((a, b) => a.order - b.order);
@@ -193,12 +268,12 @@ export async function getMilestones(): Promise<BrandEntry[]> {
 
       if (props.Type?.select?.name === "大事記") {
         milestones.push({
-          title: titleText(props.Title),
+          title: firstText(props, ["Title", "品牌說明", "標題"], titleText),
           type: "大事記",
-          date: props.Date?.date?.start ?? "",
-          richContent: richText(props.RichContent),
-          image: fileUrl(props.Cover) || fileUrl(props.Image),
-          order: Number(props.Order?.number ?? index)
+          date: firstDate(props, ["Date", "日期", "時間"]),
+          richContent: firstText(props, ["RichContent", "Content", "內容", "文字"], richText),
+          image: firstFile(props, ["Cover", "Image", "店面圖片", "圖片", "照片"]),
+          order: firstNumber(props, ["Order", "排序", "順序"], index)
         });
       }
     });
@@ -217,20 +292,20 @@ export async function getNews(): Promise<NewsItem[]> {
     if (newsDatabaseId) {
       const items = await queryDatabase<NewsItem & { isActive?: boolean }>(newsDatabaseId, (page) => {
         const props = page.properties ?? {};
-        const title = titleText(props.Title) || titleText(props.Name);
-        const slug = richText(props.Slug) || slugify(title);
+        const title = firstText(props, ["Title", "Name", "標題", "消息標題"], titleText);
+        const slug = firstText(props, ["Slug", "網址代碼", "代碼"], richText) || slugify(title);
         return {
           slug,
-          date: props.Date?.date?.start?.replaceAll("-", ".") ?? "",
+          date: firstDate(props, ["Date", "日期", "發布日期"])?.replaceAll("-", ".") ?? "",
           title,
-          excerpt: richText(props.Excerpt) || richText(props.Description),
-          category: selectName(props.Category) || "最新消息",
-          image: fileUrl(props.Cover) || fileUrl(props.Image) || "/images/goat-field.webp",
-          content: textList(richText(props.Content) || richText(props.RichContent)),
-          highlightTitle: richText(props.HighlightTitle) || "小牧人提醒",
-          highlightContent: richText(props.HighlightContent),
-          youtubeUrl: richText(props.YoutubeUrl) || richText(props.YouTube),
-          isActive: checkbox(props.IsActive)
+          excerpt: firstText(props, ["Excerpt", "Description", "摘要", "簡介"], richText),
+          category: firstSelect(props, ["Category", "分類", "類別"], "最新消息"),
+          image: firstFile(props, ["Cover", "Image", "封面", "圖片", "照片"]) || "/images/goat-field.webp",
+          content: textList(firstText(props, ["Content", "RichContent", "內容", "文章內容"], richText)),
+          highlightTitle: firstText(props, ["HighlightTitle", "重點標題"], richText) || "小牧人提醒",
+          highlightContent: firstText(props, ["HighlightContent", "重點內容"], richText),
+          youtubeUrl: firstText(props, ["YoutubeUrl", "YouTube", "YouTube網址", "影片網址"], richText),
+          isActive: firstCheckbox(props, ["IsActive", "上架狀況", "發布", "啟用"], true)
         };
       });
       const activeItems = items
@@ -267,12 +342,12 @@ export async function getDeliveryMethods(): Promise<DeliveryMethod[]> {
     const methods = await queryDatabase<DeliveryMethod & { isActive?: boolean }>(databaseId, (page) => {
       const props = page.properties ?? {};
       return {
-        area: titleText(props.Area) || titleText(props.Name),
-        schedule: richText(props.Schedule),
-        method: richText(props.Method),
-        minimum: richText(props.Minimum),
-        note: richText(props.Note),
-        isActive: checkbox(props.IsActive)
+        area: firstText(props, ["Area", "Name", "配送地區", "地區", "名稱"], titleText),
+        schedule: firstText(props, ["Schedule", "配送日", "配送時間", "時間"], richText),
+        method: firstText(props, ["Method", "配送方式", "方式"], richText),
+        minimum: firstText(props, ["Minimum", "最低數量", "最低瓶數"], richText),
+        note: firstText(props, ["Note", "備註", "說明"], richText),
+        isActive: firstCheckbox(props, ["IsActive", "上架狀況", "啟用"], true)
       };
     });
     const activeMethods = methods

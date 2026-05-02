@@ -32,6 +32,7 @@ pnpm run dev
 - `NOTION_NEWS_DB_ID`
 - `NOTION_DELIVERY_DB_ID`
 - `NOTION_ORDER_DB_ID`
+- `NOTION_CACHE_SECONDS`
 - `PUBLIC_SITE_URL`
 - `PUBLIC_LINE_URL`
 - `PUBLIC_NAVIGATION_NAME`
@@ -41,6 +42,8 @@ pnpm run dev
 首頁「導航到小牧人羊奶」會使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 組成 Google 地圖搜尋連結。市集活動時只要更新地址即可切換導航目的地。
 
 Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料，不會把 Notion 原始 JSON 傳到前端。
+
+Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設可設為 `60`，代表 Notion 圖文更新後最多約 60 秒內會同步到網站；若正在密集編輯，可暫時調低為 `10` 或 `0`。
 
 配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `NOTION_ORDER_DB_ID`，訂單會由網站後端寫入 Notion「訂單資訊」資料庫，後續通知 Line 由 Notion/n8n 自動化處理。若 Notion 寫入失敗，系統會開啟 Line 訊息備援，讓顧客手動送出。
 
@@ -84,6 +87,8 @@ Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料�
 ### News_DB
 
 可選。若設定 `NOTION_NEWS_DB_ID`，新聞列表與最新三則會由此資料庫讀取：`Title`、`Slug`、`Date`、`Excerpt`、`Category`、`Cover`、`Content`、`HighlightTitle`、`HighlightContent`、`YoutubeUrl`、`IsActive`。
+
+網站已支援常見中文欄位別名，例如產品可使用 `產品名稱`、`產品價格`、`產品分類`、`產品照片`、`產品簡介`；新聞可使用 `標題`、`摘要`、`內容`、`影片網址`。仍建議固定欄位命名，避免多人編輯時混淆。
 
 ### Delivery_DB
 
