@@ -8,6 +8,8 @@ Last updated: 2026-05-02
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
+- 最新部署：`7d2b953 Stabilize Notion SSR content updates` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
 ## Runbook
@@ -23,6 +25,20 @@ Last updated: 2026-05-02
 - 未設定 Notion 時，網站使用 `src/lib/content.ts` fallback 資料。
 - 頁面文案 key 與圖片覆蓋邏輯在 `src/lib/page-copy.ts`。
 - 訂單 API 在 `src/pages/api/order.ts`。
+- Zeabur SSR 會在伺服器端讀取 Notion，並以 `NOTION_CACHE_SECONDS` 控制短快取。
+- 產品與小牧人大事記已驗證可由 Notion 更新後呈現在正式網站。
+- 最新消息目前仍使用 fallback 資料；若要由 Notion 管理，需設定 `NOTION_NEWS_DB_ID`。
+
+## Work Log
+
+### 2026-05-02
+
+- 依 `astro調整.md` 採用穩定版 SSR CMS 調整方向。
+- 增加 Notion 短快取與欄位別名容錯，降低欄位命名差異造成的更新失敗。
+- 將最新消息內頁改為 Zeabur SSR 動態讀取；靜態預覽模式仍可 prerender。
+- 新增 CMS 圖片防呆樣式，避免全域圖片裁切影響 Logo、QR Code 或商品圖。
+- 更新 README、AGENTS、專案 cockpit 與 `astro-notion-zeabur-site` 技能流程。
+- 本機與正式 Zeabur 驗證商品頁、大事記頁、首頁與訂單頁均正常回應。
 
 ## Deployment
 
