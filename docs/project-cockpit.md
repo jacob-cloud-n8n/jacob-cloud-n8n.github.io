@@ -1,6 +1,6 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-02
+Last updated: 2026-05-03
 
 ## Current Status
 
@@ -27,7 +27,8 @@ Last updated: 2026-05-02
 - 訂單 API 在 `src/pages/api/order.ts`。
 - Zeabur SSR 會在伺服器端讀取 Notion，並以 `NOTION_CACHE_SECONDS` 控制短快取。
 - 產品與小牧人大事記已驗證可由 Notion 更新後呈現在正式網站。
-- 最新消息目前仍使用 fallback 資料；若要由 Notion 管理，需設定 `NOTION_NEWS_DB_ID`。
+- 首頁、最新消息列表、配送方案與加入 Line 已建立獨立 Notion 維護資料庫，用 `名稱` 欄位存放前台 key、`前台位置` 欄位註記網站位置。
+- 最新消息資料庫同時管理列表頁文案與消息資料；`類型=消息` 會顯示在最新消息列表與首頁最新三則。
 
 ## Work Log
 
@@ -49,10 +50,13 @@ Last updated: 2026-05-02
 ## Environment Checklist
 
 - `NOTION_TOKEN`
+- `NOTION_HOME_DB_ID`
 - `NOTION_PRODUCT_DB_ID`
 - `NOTION_BRAND_DB_ID`
 - `NOTION_NEWS_DB_ID`
 - `NOTION_DELIVERY_DB_ID`
+- `NOTION_DELIVERY_PAGE_DB_ID`
+- `NOTION_LINE_DB_ID`
 - `NOTION_ORDER_DB_ID`
 - `NOTION_CACHE_SECONDS`
 - `PUBLIC_SITE_URL`

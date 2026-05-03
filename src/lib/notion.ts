@@ -14,6 +14,10 @@ import {
 const notionVersion = "2022-06-28";
 const defaultProductDatabaseId = "35089dd14f0a804480fad43c37044ef4";
 const defaultBrandDatabaseId = "35089dd14f0a80e199d0e0e1c9254815";
+const defaultHomeDatabaseId = "35589dd14f0a8047963cc81164e2d217";
+const defaultNewsDatabaseId = "35589dd14f0a808a985bfd50291f3f9b";
+const defaultDeliveryPageDatabaseId = "35589dd14f0a8065a1b2d288d16c547f";
+const defaultLineDatabaseId = "35589dd14f0a80a784f3cfc3246f6813";
 const productCategories = new Set(["鮮乳", "優酪乳", "甜點", "特調飲品", "贈品"]);
 const defaultCacheSeconds = 60;
 
@@ -113,12 +117,29 @@ function firstCheckbox(props: Record<string, any>, names: string[], fallback = t
   return fallback;
 }
 
+function firstOptionalCheckbox(props: Record<string, any>, names: string[]): boolean | undefined {
+  for (const name of names) {
+    const prop = propertyByNames(props, [name]);
+    if (typeof prop?.checkbox === "boolean") return prop.checkbox;
+    const selected = selectName(prop);
+    if (selected) return selected !== "停用";
+  }
+  return undefined;
+}
+
 function firstDate(props: Record<string, any>, names: string[], fallback = ""): string {
   for (const name of names) {
     const value = propertyByNames(props, [name])?.date?.start;
     if (value) return value;
   }
   return fallback;
+}
+
+function mergePageCopy(target: PageCopy, source: PageCopy): PageCopy {
+  return {
+    ...target,
+    ...Object.fromEntries(Object.entries(source).filter(([, value]) => value.text || value.image))
+  };
 }
 
 function slugify(value: string): string {
@@ -288,11 +309,12 @@ export async function getMilestones(): Promise<BrandEntry[]> {
 
 export async function getNews(): Promise<NewsItem[]> {
   try {
-    const newsDatabaseId = import.meta.env.NOTION_NEWS_DB_ID;
+    const newsDatabaseId = import.meta.env.NOTION_NEWS_DB_ID || defaultNewsDatabaseId;
     if (newsDatabaseId) {
       const items = await queryDatabase<NewsItem & { isActive?: boolean }>(newsDatabaseId, (page) => {
         const props = page.properties ?? {};
-        const title = firstText(props, ["Title", "Name", "標題", "消息標題"], titleText);
+        const type = firstSelect(props, ["Type", "類型"], "消息");
+        const title = firstText(props, ["Title", "Name", "名稱", "標題", "消息標題"], titleText);
         const slug = firstText(props, ["Slug", "網址代碼", "代碼"], richText) || slugify(title);
         return {
           slug,
@@ -305,7 +327,7 @@ export async function getNews(): Promise<NewsItem[]> {
           highlightTitle: firstText(props, ["HighlightTitle", "重點標題"], richText) || "小牧人提醒",
           highlightContent: firstText(props, ["HighlightContent", "重點內容"], richText),
           youtubeUrl: firstText(props, ["YoutubeUrl", "YouTube", "YouTube網址", "影片網址"], richText),
-          isActive: firstCheckbox(props, ["IsActive", "上架狀況", "發布", "啟用"], true)
+          isActive: type !== "頁面文案" && firstCheckbox(props, ["IsActive", "上架狀況", "發布", "啟用"], true)
         };
       });
       const activeItems = items
@@ -360,18 +382,48 @@ export async function getDeliveryMethods(): Promise<DeliveryMethod[]> {
   }
 }
 
+async function getCopyFromDatabase(databaseId: string, titleNames: string[] = ["名稱"]): Promise<PageCopy> {
+  if (!databaseId) return {};
+  const entries = await queryDatabase<[string, PageCopy[string], boolean]>(databaseId, (page) => {
+    const props = page.properties ?? {};
+    const key = firstText(props, [...titleNames, "Title", "Name", "標題", "品牌說明"], titleText);
+    const text = firstText(props, ["文字內容", "內容", "RichContent", "Content", "文字"], richText);
+    const image = firstFile(props, ["圖片", "Cover", "Image", "店面圖片", "照片"]);
+    const type = firstSelect(props, ["類型", "Type"], "");
+    const enabled = firstOptionalCheckbox(props, ["啟用"]);
+    const publishState = firstOptionalCheckbox(props, ["IsActive", "上架狀況", "發布"]);
+    const isActive = enabled ?? (type === "頁面文案" ? true : publishState ?? true);
+    return [key, { text, image }, isActive];
+  });
+
+  return entries
+    .filter(([key, value, isActive]) => isActive && key.includes(".") && (value.text || value.image))
+    .reduce<PageCopy>((copy, [key, value]) => {
+      copy[key] = value;
+      return copy;
+    }, {});
+}
+
 export async function getPageCopy(): Promise<PageCopy> {
   try {
-    const entries = await getBrandContent([]);
-    return entries
-      .filter((entry) => entry.type === "頁面文案" && entry.title)
-      .reduce<PageCopy>((copy, entry) => {
-        copy[entry.title] = {
-          text: entry.richContent,
-          image: entry.image
-        };
-        return copy;
-      }, {});
+    let copy: PageCopy = {};
+    const sources = [
+      { id: import.meta.env.NOTION_HOME_DB_ID || defaultHomeDatabaseId, titles: ["名稱"] },
+      { id: import.meta.env.NOTION_NEWS_DB_ID || defaultNewsDatabaseId, titles: ["名稱"] },
+      { id: import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, titles: ["品牌說明"] },
+      { id: import.meta.env.NOTION_DELIVERY_PAGE_DB_ID || defaultDeliveryPageDatabaseId, titles: ["名稱"] },
+      { id: import.meta.env.NOTION_LINE_DB_ID || defaultLineDatabaseId, titles: ["名稱"] }
+    ];
+
+    for (const source of sources) {
+      try {
+        copy = mergePageCopy(copy, await getCopyFromDatabase(source.id, source.titles));
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+
+    return copy;
   } catch (error) {
     console.warn(error);
     return {};

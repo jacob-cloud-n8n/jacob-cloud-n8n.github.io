@@ -27,10 +27,13 @@ pnpm run dev
 複製 `.env.example` 後填入：
 
 - `NOTION_TOKEN`
+- `NOTION_HOME_DB_ID`
 - `NOTION_PRODUCT_DB_ID`
 - `NOTION_BRAND_DB_ID`
 - `NOTION_NEWS_DB_ID`
 - `NOTION_DELIVERY_DB_ID`
+- `NOTION_DELIVERY_PAGE_DB_ID`
+- `NOTION_LINE_DB_ID`
 - `NOTION_ORDER_DB_ID`
 - `NOTION_CACHE_SECONDS`
 - `PUBLIC_SITE_URL`
@@ -44,6 +47,8 @@ pnpm run dev
 Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料，不會把 Notion 原始 JSON 傳到前端。
 
 Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設可設為 `60`，代表 Notion 圖文更新後最多約 60 秒內會同步到網站；若正在密集編輯，可暫時調低為 `10` 或 `0`。
+
+首頁、最新消息列表、大事記、配送方案與加入 Line 頁面的區塊文案可由各自的頁面維護資料庫管理。每列的 `名稱` 或 `品牌說明` 欄位使用前台 key，例如 `home.hero.title`、`news.hero.description`、`line.benefits.1.title`；`前台位置` 說明該資料對應到網站哪個圖文位置。
 
 配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `NOTION_ORDER_DB_ID`，訂單會由網站後端寫入 Notion「訂單資訊」資料庫，後續通知 Line 由 Notion/n8n 自動化處理。若 Notion 寫入失敗，系統會開啟 Line 訊息備援，讓顧客手動送出。
 
@@ -86,7 +91,7 @@ Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設
 
 ### News_DB
 
-可選。若設定 `NOTION_NEWS_DB_ID`，新聞列表與最新三則會由此資料庫讀取：`Title`、`Slug`、`Date`、`Excerpt`、`Category`、`Cover`、`Content`、`HighlightTitle`、`HighlightContent`、`YoutubeUrl`、`IsActive`。
+若設定 `NOTION_NEWS_DB_ID`，新聞列表與首頁最新三則會由此資料庫讀取：`名稱`、`類型`、`Slug`、`Date`、`Excerpt`、`Category`、`Cover`、`Content`、`HighlightTitle`、`HighlightContent`、`YoutubeUrl`、`IsActive`。`類型=消息` 會顯示為文章；`類型=頁面文案` 僅供列表頁標題與說明使用。
 
 網站已支援常見中文欄位別名，例如產品可使用 `產品名稱`、`產品價格`、`產品分類`、`產品照片`、`產品簡介`；新聞可使用 `標題`、`摘要`、`內容`、`影片網址`。仍建議固定欄位命名，避免多人編輯時混淆。
 

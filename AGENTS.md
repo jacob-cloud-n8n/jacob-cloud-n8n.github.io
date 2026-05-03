@@ -31,10 +31,13 @@
 - Document required variables in `.env.example` and `README.md` when adding new integrations.
 - Current known variables:
   - `NOTION_TOKEN`
+  - `NOTION_HOME_DB_ID`
   - `NOTION_PRODUCT_DB_ID`
   - `NOTION_BRAND_DB_ID`
   - `NOTION_NEWS_DB_ID`
   - `NOTION_DELIVERY_DB_ID`
+  - `NOTION_DELIVERY_PAGE_DB_ID`
+  - `NOTION_LINE_DB_ID`
   - `NOTION_ORDER_DB_ID`
   - `NOTION_CACHE_SECONDS`
   - `PUBLIC_SITE_URL`
