@@ -8,7 +8,7 @@ Last updated: 2026-05-03
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新部署：`7d2b953 Stabilize Notion SSR content updates` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 最新部署：`cb0376a Add Notion-managed page slots for marked sections` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
 - 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
@@ -32,6 +32,15 @@ Last updated: 2026-05-03
 - 商品廚窗底部文案、甜點補充圖片、文章內頁右側卡片、Line QR 圖片與配送第三方案已補成 Notion 可維護欄位。
 
 ## Work Log
+
+### 2026-05-03
+
+- 建立並串接首頁、最新消息、配送方案、加入官方 Line 的獨立 Notion 頁面維護資料庫。
+- 商品廚窗保留原產品資料庫，新增 `products.note.*` 與 `products.sweets.extra.title` 等可維護前台欄位。
+- 最新消息資料庫新增文章內頁右側卡片欄位：`SideImage`、`SideTitle`、`SidePrice`、`SideNote`。
+- 配送方案新增可維護的「單次訂購」方案欄位，前台會同步更新訂單摘要。
+- 加入官方 Line 頁改為讀取 Notion 的 QR 圖片，避免使用假圖。
+- Server build、Static preview build 與 Zeabur 正式部署均已驗證通過。
 
 ### 2026-05-02
 
