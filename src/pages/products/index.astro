@@ -208,7 +208,7 @@ const sweetExtraLabel = copyText(pageCopy, "products.sweets.extra.title", "ç”œé»
 
   .image-field {
     display: grid;
-    min-height: 172px;
+    min-height: 240px;
     place-items: center;
     margin-top: 18px;
     border: 2px dashed rgba(124, 88, 0, 0.18);
@@ -217,8 +217,12 @@ const sweetExtraLabel = copyText(pageCopy, "products.sweets.extra.title", "ç”œé»
   }
 
   .image-field img {
-    max-height: 220px;
-    object-fit: contain;
+    width: 90%;
+    height: 90%;
+    min-height: 200px;
+    max-height: none;
+    object-fit: cover;
+    object-position: center;
   }
 
   .image-field span {

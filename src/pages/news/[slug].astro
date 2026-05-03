@@ -14,6 +14,8 @@ const item = Astro.props.item ?? news.find((entry) => entry.slug === Astro.param
 if (!item) {
   return Astro.redirect("/news/");
 }
+const currentIndex = news.findIndex((entry) => entry.slug === item.slug);
+const relatedItem = news.length > 1 ? news[(currentIndex + 1) % news.length] : item;
 const youtubeId = item.youtubeUrl?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/)?.[1];
 ---
 
@@ -49,13 +51,12 @@ const youtubeId = item.youtubeUrl?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/
           )}
         </div>
         <aside class="side-card">
-          <img class="cms-image-cover" src={item.sideImage || item.image} alt={item.sideTitle || item.title} width="320" height="420" />
-          <strong>{item.sideTitle || item.title}</strong>
-          {item.sidePrice && <span>{item.sidePrice}</span>}
-          <a class="button" href="/delivery/">立即訂購</a>
+          <img class="cms-image-cover" src={relatedItem.image} alt={relatedItem.title} width="320" height="420" />
+          <strong>{relatedItem.title}</strong>
+          <a class="button" href={`/news/${relatedItem.slug}/`}>閱讀下一則消息</a>
           <div class="share-box">
             <b>文章重點</b>
-            <p>{item.sideNote || item.excerpt}</p>
+            <p>{relatedItem.excerpt}</p>
           </div>
         </aside>
       </div>
