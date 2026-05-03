@@ -5,6 +5,30 @@ import { copyText } from "@lib/page-copy";
 
 const pageCopy = await getPageCopy();
 const deliveryMethods = await getDeliveryMethods();
+const plans = [
+  {
+    value: "3month",
+    title: copyText(pageCopy, "delivery.plan.3month.title", "一次訂購三個月，享9折價"),
+    desc: copyText(pageCopy, "delivery.plan.3month.desc", "每個月寄送6瓶，三個月共18瓶"),
+    price: copyText(pageCopy, "delivery.plan.3month.price", "平均每瓶 NT$200"),
+    total: copyText(pageCopy, "delivery.plan.3month.total", "NT$ 3,600")
+  },
+  {
+    value: "6month",
+    title: copyText(pageCopy, "delivery.plan.6month.title", "一次訂購6個月，享85折價"),
+    desc: copyText(pageCopy, "delivery.plan.6month.desc", "每個月寄送6瓶，六個月共36瓶"),
+    price: copyText(pageCopy, "delivery.plan.6month.price", "平均每瓶 NT$190"),
+    total: copyText(pageCopy, "delivery.plan.6month.total", "NT$ 6,840")
+  },
+  {
+    value: "trial",
+    title: copyText(pageCopy, "delivery.plan.trial.title", "單次訂購"),
+    desc: copyText(pageCopy, "delivery.plan.trial.desc", "先訂一次喝喝看，單次共6瓶"),
+    price: copyText(pageCopy, "delivery.plan.trial.price", "平均每瓶 NT$225"),
+    total: copyText(pageCopy, "delivery.plan.trial.total", "NT$ 1,350")
+  }
+];
+const defaultPlan = plans[0];
 ---
 
 <MainLayout
@@ -24,18 +48,14 @@ const deliveryMethods = await getDeliveryMethods();
             <section>
               <span>1</span>
               <h2>選擇瓶數大小</h2>
-              <label class="plan active" data-plan="一次訂購三個月，享9折價" data-desc="每個月寄送6瓶，三個月共18瓶" data-price="平均每瓶 NT$200" data-total="NT$ 3,600">
-                <input type="radio" name="size" checked value="3month" />
-                <b>一次訂購三個月，享9折價</b>
-                <small>每個月寄送6瓶，三個月共18瓶</small>
-                <strong>平均每瓶 NT$200</strong>
-              </label>
-              <label class="plan" data-plan="一次訂購6個月，享85折價" data-desc="每個月寄送6瓶，六個月共36瓶" data-price="平均每瓶 NT$190" data-total="NT$ 6,840">
-                <input type="radio" name="size" value="6month" />
-                <b>一次訂購6個月，享85折價</b>
-                <small>每個月寄送6瓶，六個月共36瓶</small>
-                <strong>平均每瓶 NT$190</strong>
-              </label>
+              {plans.map((plan, index) => (
+                <label class:list={["plan", { active: index === 0 }]} data-plan={plan.title} data-desc={plan.desc} data-price={plan.price} data-total={plan.total}>
+                  <input type="radio" name="size" checked={index === 0} value={plan.value} />
+                  <b>{plan.title}</b>
+                  <small>{plan.desc}</small>
+                  <strong>{plan.price}</strong>
+                </label>
+              ))}
             </section>
             <section>
               <span>2</span>
@@ -48,12 +68,12 @@ const deliveryMethods = await getDeliveryMethods();
           </div>
           <aside class="summary">
             <h2>訂單摘要</h2>
-            <div><span>方案</span><b data-summary-plan>一次訂購三個月，享9折價</b></div>
-            <div><span>瓶數</span><b data-summary-desc>每個月寄送6瓶，三個月共18瓶</b></div>
+            <div><span>方案</span><b data-summary-plan>{defaultPlan.title}</b></div>
+            <div><span>瓶數</span><b data-summary-desc>{defaultPlan.desc}</b></div>
             <div><span>配送頻率</span><b data-summary-frequency>每月配送</b></div>
-            <div><span>單瓶均價</span><b data-summary-price>平均每瓶 NT$200</b></div>
+            <div><span>單瓶均價</span><b data-summary-price>{defaultPlan.price}</b></div>
             <hr />
-            <strong>方案總金額<em data-summary-total>NT$ 3,600</em></strong>
+            <strong>方案總金額<em data-summary-total>{defaultPlan.total}</em></strong>
             <p>正式訂購將透過官方 Line 確認配送地址、付款方式與可配送區域。</p>
             <a class="button" href="/order/?plan=3month&frequency=%E6%AF%8F%E6%9C%88%E9%85%8D%E9%80%81" data-order-link>確認訂閱</a>
           </aside>

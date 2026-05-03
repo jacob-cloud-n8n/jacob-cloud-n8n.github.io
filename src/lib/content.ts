@@ -32,6 +32,10 @@ export type NewsItem = {
   highlightTitle: string;
   highlightContent: string;
   youtubeUrl?: string;
+  sideImage?: string;
+  sideTitle?: string;
+  sidePrice?: string;
+  sideNote?: string;
 };
 
 export type DeliveryMethod = {

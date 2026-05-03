@@ -91,7 +91,9 @@ Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設
 
 ### News_DB
 
-若設定 `NOTION_NEWS_DB_ID`，新聞列表與首頁最新三則會由此資料庫讀取：`名稱`、`類型`、`Slug`、`Date`、`Excerpt`、`Category`、`Cover`、`Content`、`HighlightTitle`、`HighlightContent`、`YoutubeUrl`、`IsActive`。`類型=消息` 會顯示為文章；`類型=頁面文案` 僅供列表頁標題與說明使用。
+若設定 `NOTION_NEWS_DB_ID`，新聞列表與首頁最新三則會由此資料庫讀取：`名稱`、`類型`、`Slug`、`Date`、`Excerpt`、`Category`、`Cover`、`Content`、`HighlightTitle`、`HighlightContent`、`YoutubeUrl`、`SideImage`、`SideTitle`、`SidePrice`、`SideNote`、`IsActive`。`類型=消息` 會顯示為文章；`類型=頁面文案` 僅供列表頁標題與說明使用。文章內頁右側卡片可透過 `Side*` 欄位替換圖片與文案。
+
+商品廚窗的頁面文案也可放在產品資料庫中，使用 `產品名稱` 欄位存放前台 key，例如 `products.note.title`、`products.note.image`、`products.sweets.extra.title`；文字放在 `產品簡介`，圖片放在 `產品照片`。
 
 網站已支援常見中文欄位別名，例如產品可使用 `產品名稱`、`產品價格`、`產品分類`、`產品照片`、`產品簡介`；新聞可使用 `標題`、`摘要`、`內容`、`影片網址`。仍建議固定欄位命名，避免多人編輯時混淆。
 

@@ -8,6 +8,8 @@ const products = await getProducts();
 const fresh = products.filter((product) => product.category === "鮮乳" || product.category === "優酪乳");
 const drinks = products.filter((product) => product.category === "特調飲品");
 const sweets = products.filter((product) => product.category === "甜點");
+const sweetExtraImage = copyImage(pageCopy, "products.sweets.extra.title", "");
+const sweetExtraLabel = copyText(pageCopy, "products.sweets.extra.title", "甜點系列補充圖片欄位");
 ---
 
 <MainLayout
@@ -53,7 +55,13 @@ const sweets = products.filter((product) => product.category === "甜點");
               <b>NT$ {product.price}</b>
             </a>
           ))}
-          <div class="image-field" aria-label="可自由加入甜點圖片的欄位"></div>
+          <div class="image-field" aria-label="可自由加入甜點圖片的欄位">
+            {sweetExtraImage ? (
+              <img class="cms-image-contain" src={sweetExtraImage} alt={sweetExtraLabel} width="360" height="220" loading="lazy" />
+            ) : (
+              <span>{sweetExtraLabel}</span>
+            )}
+          </div>
         </aside>
       </div>
     </section>
@@ -206,6 +214,17 @@ const sweets = products.filter((product) => product.category === "甜點");
     border: 2px dashed rgba(124, 88, 0, 0.18);
     border-radius: 18px;
     background: rgba(255, 248, 243, 0.52);
+  }
+
+  .image-field img {
+    max-height: 220px;
+    object-fit: contain;
+  }
+
+  .image-field span {
+    color: rgba(62, 54, 46, 0.42);
+    font-weight: 800;
+    text-align: center;
   }
 
   .drink-grid {

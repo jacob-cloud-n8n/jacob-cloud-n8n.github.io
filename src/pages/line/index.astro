@@ -1,10 +1,13 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
 import { getPageCopy } from "@lib/notion";
-import { copyText } from "@lib/page-copy";
+import { copyImage, copyText } from "@lib/page-copy";
 
-const lineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@little-shepherd";
 const pageCopy = await getPageCopy();
+const configuredLineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@little-shepherd";
+const lineUrlCopy = copyText(pageCopy, "line.cta.url", configuredLineUrl);
+const lineUrl = lineUrlCopy === "PUBLIC_LINE_URL" ? configuredLineUrl : lineUrlCopy;
+const qrImage = copyImage(pageCopy, "line.qr.image", "");
 ---
 
 <MainLayout
@@ -38,7 +41,11 @@ const pageCopy = await getPageCopy();
           </article>
           <article class="qr-panel">
             <span>LINE 官方帳號</span>
-            <div class="qr">LINE</div>
+            {qrImage ? (
+              <img class="qr-image cms-image-contain" src={qrImage} alt="小牧人官方 LINE QR Code" width="260" height="260" loading="lazy" />
+            ) : (
+              <div class="qr">LINE</div>
+            )}
             <a class="button" href={lineUrl}>立即掃描加入</a>
             <small>或搜尋 LINE ID：@LittleShepherd</small>
           </article>
@@ -149,6 +156,15 @@ const pageCopy = await getPageCopy();
       #fff;
     color: #00b900;
     font-weight: 900;
+  }
+
+  .qr-image {
+    width: min(64vw, 240px);
+    aspect-ratio: 1;
+    border: 16px solid #eef8ed;
+    border-radius: 18px;
+    background: #fff;
+    object-fit: contain;
   }
 
   small {

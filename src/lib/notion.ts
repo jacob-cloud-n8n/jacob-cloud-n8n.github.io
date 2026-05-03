@@ -236,7 +236,7 @@ export async function getProducts(): Promise<Product[]> {
         isActive: firstCheckbox(props, ["IsActive", "上架狀況", "上架", "啟用"], true)
       };
     });
-    const namedProducts = products.filter((product) => product.name);
+    const namedProducts = products.filter((product) => product.name && !product.name.includes("."));
     const activeProducts = namedProducts.filter((product) => product.isActive);
     return activeProducts.length > 0 ? activeProducts : namedProducts.length > 0 ? namedProducts : fallbackProducts;
   } catch (error) {
@@ -327,6 +327,10 @@ export async function getNews(): Promise<NewsItem[]> {
           highlightTitle: firstText(props, ["HighlightTitle", "重點標題"], richText) || "小牧人提醒",
           highlightContent: firstText(props, ["HighlightContent", "重點內容"], richText),
           youtubeUrl: firstText(props, ["YoutubeUrl", "YouTube", "YouTube網址", "影片網址"], richText),
+          sideImage: firstFile(props, ["SideImage", "側欄圖片", "右側圖片", "商品圖片"]),
+          sideTitle: firstText(props, ["SideTitle", "側欄標題", "右側標題", "商品標題"], richText),
+          sidePrice: firstText(props, ["SidePrice", "側欄價格", "右側價格", "商品價格"], richText),
+          sideNote: firstText(props, ["SideNote", "側欄重點", "右側重點", "商品重點"], richText),
           isActive: type !== "頁面文案" && firstCheckbox(props, ["IsActive", "上架狀況", "發布", "啟用"], true)
         };
       });
@@ -387,8 +391,8 @@ async function getCopyFromDatabase(databaseId: string, titleNames: string[] = ["
   const entries = await queryDatabase<[string, PageCopy[string], boolean]>(databaseId, (page) => {
     const props = page.properties ?? {};
     const key = firstText(props, [...titleNames, "Title", "Name", "標題", "品牌說明"], titleText);
-    const text = firstText(props, ["文字內容", "內容", "RichContent", "Content", "文字"], richText);
-    const image = firstFile(props, ["圖片", "Cover", "Image", "店面圖片", "照片"]);
+    const text = firstText(props, ["文字內容", "內容", "RichContent", "Content", "文字", "產品簡介"], richText);
+    const image = firstFile(props, ["圖片", "Cover", "Image", "店面圖片", "照片", "產品照片"]);
     const type = firstSelect(props, ["類型", "Type"], "");
     const enabled = firstOptionalCheckbox(props, ["啟用"]);
     const publishState = firstOptionalCheckbox(props, ["IsActive", "上架狀況", "發布"]);
@@ -411,6 +415,7 @@ export async function getPageCopy(): Promise<PageCopy> {
       { id: import.meta.env.NOTION_HOME_DB_ID || defaultHomeDatabaseId, titles: ["名稱"] },
       { id: import.meta.env.NOTION_NEWS_DB_ID || defaultNewsDatabaseId, titles: ["名稱"] },
       { id: import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, titles: ["品牌說明"] },
+      { id: import.meta.env.NOTION_PRODUCT_DB_ID || defaultProductDatabaseId, titles: ["產品名稱"] },
       { id: import.meta.env.NOTION_DELIVERY_PAGE_DB_ID || defaultDeliveryPageDatabaseId, titles: ["名稱"] },
       { id: import.meta.env.NOTION_LINE_DB_ID || defaultLineDatabaseId, titles: ["名稱"] }
     ];
