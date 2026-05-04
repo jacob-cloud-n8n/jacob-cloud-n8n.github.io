@@ -4,7 +4,7 @@ import { getDeliveryMethods, getPageCopy } from "@lib/notion";
 import { copyText } from "@lib/page-copy";
 
 const pageCopy = await getPageCopy();
-const deliveryMethods = await getDeliveryMethods();
+const deliveryMethodFallbacks = await getDeliveryMethods();
 const plans = [
   {
     value: "3month",
@@ -29,6 +29,16 @@ const plans = [
   }
 ];
 const defaultPlan = plans[0];
+const deliveryMethods = deliveryMethodFallbacks.map((method, index) => {
+  const key = `delivery.method.${index + 1}`;
+  return {
+    area: copyText(pageCopy, `${key}.area`, method.area),
+    schedule: copyText(pageCopy, `${key}.schedule`, method.schedule),
+    method: copyText(pageCopy, `${key}.method`, method.method),
+    minimum: copyText(pageCopy, `${key}.minimum`, method.minimum),
+    note: copyText(pageCopy, `${key}.note`, method.note)
+  };
+});
 ---
 
 <MainLayout
@@ -47,7 +57,7 @@ const defaultPlan = plans[0];
           <div class="steps">
             <section>
               <span>1</span>
-              <h2>選擇瓶數大小</h2>
+              <h2>{copyText(pageCopy, "delivery.planSection.title", "選擇瓶數大小")}</h2>
               {plans.map((plan, index) => (
                 <label class:list={["plan", { active: index === 0 }]} data-plan={plan.title} data-desc={plan.desc} data-price={plan.price} data-total={plan.total}>
                   <input type="radio" name="size" checked={index === 0} value={plan.value} />
@@ -59,23 +69,23 @@ const defaultPlan = plans[0];
             </section>
             <section>
               <span>2</span>
-              <h2>配送頻率</h2>
+              <h2>{copyText(pageCopy, "delivery.frequency.title", "配送頻率")}</h2>
               <div class="freq-grid">
-                <button class="active" type="button" data-frequency="每月配送">每月配送</button>
-                <button type="button" data-frequency="依客服確認">依客服確認</button>
+                <button class="active" type="button" data-frequency={copyText(pageCopy, "delivery.frequency.monthly", "每月配送")}>{copyText(pageCopy, "delivery.frequency.monthly", "每月配送")}</button>
+                <button type="button" data-frequency={copyText(pageCopy, "delivery.frequency.service", "依客服確認")}>{copyText(pageCopy, "delivery.frequency.service", "依客服確認")}</button>
               </div>
             </section>
           </div>
           <aside class="summary">
-            <h2>訂單摘要</h2>
-            <div><span>方案</span><b data-summary-plan>{defaultPlan.title}</b></div>
-            <div><span>瓶數</span><b data-summary-desc>{defaultPlan.desc}</b></div>
-            <div><span>配送頻率</span><b data-summary-frequency>每月配送</b></div>
-            <div><span>單瓶均價</span><b data-summary-price>{defaultPlan.price}</b></div>
+            <h2>{copyText(pageCopy, "delivery.summary.title", "訂單摘要")}</h2>
+            <div><span>{copyText(pageCopy, "delivery.summary.planLabel", "方案")}</span><b data-summary-plan>{defaultPlan.title}</b></div>
+            <div><span>{copyText(pageCopy, "delivery.summary.bottleLabel", "瓶數")}</span><b data-summary-desc>{defaultPlan.desc}</b></div>
+            <div><span>{copyText(pageCopy, "delivery.summary.frequencyLabel", "配送頻率")}</span><b data-summary-frequency>{copyText(pageCopy, "delivery.frequency.monthly", "每月配送")}</b></div>
+            <div><span>{copyText(pageCopy, "delivery.summary.priceLabel", "單瓶均價")}</span><b data-summary-price>{defaultPlan.price}</b></div>
             <hr />
-            <strong>方案總金額<em data-summary-total>{defaultPlan.total}</em></strong>
-            <p>正式訂購將透過官方 Line 確認配送地址、付款方式與可配送區域。</p>
-            <a class="button" href="/order/?plan=3month&frequency=%E6%AF%8F%E6%9C%88%E9%85%8D%E9%80%81" data-order-link>確認訂閱</a>
+            <strong>{copyText(pageCopy, "delivery.summary.totalLabel", "方案總金額")}<em data-summary-total>{defaultPlan.total}</em></strong>
+            <p>{copyText(pageCopy, "delivery.summary.note", "正式訂購將透過官方 Line 確認配送地址、付款方式與可配送區域。")}</p>
+            <a class="button" href="/order/?plan=3month&frequency=%E6%AF%8F%E6%9C%88%E9%85%8D%E9%80%81" data-order-link>{copyText(pageCopy, "delivery.summary.button", "確認訂閱")}</a>
           </aside>
         </div>
         <section class="delivery-methods">

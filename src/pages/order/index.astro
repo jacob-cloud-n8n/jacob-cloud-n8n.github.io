@@ -7,9 +7,12 @@ const pageCopy = await getPageCopy();
 const plan = Astro.url.searchParams.get("plan") ?? "3month";
 const frequency = Astro.url.searchParams.get("frequency") ?? "每月配送";
 const planLabels: Record<string, string> = {
-  "3month": "一次訂購三個月，享9折價",
-  "6month": "一次訂購6個月，享85折價"
+  "3month": copyText(pageCopy, "delivery.plan.3month.title", "一次訂購三個月，享9折價"),
+  "6month": copyText(pageCopy, "delivery.plan.6month.title", "一次訂購6個月，享85折價"),
+  "trial": copyText(pageCopy, "delivery.plan.trial.title", "單次訂購")
 };
+const selectedPlanLabel = planLabels[plan] ?? planLabels["3month"];
+const planLabelsJson = JSON.stringify(planLabels);
 ---
 
 <MainLayout
@@ -24,9 +27,9 @@ const planLabels: Record<string, string> = {
           <span class="pill">{copyText(pageCopy, "order.hero.badge", "Order Form")}</span>
           <h1>{copyText(pageCopy, "order.hero.title", "填寫訂單資料")}</h1>
           <p>{copyText(pageCopy, "order.hero.description", "留下基本配送資訊後，系統會將訂單送到小牧人客服流程，後續由官方 Line 協助確認付款、配送區域與到貨時間。")}</p>
-          <div class="summary-card">
-            <b>已選方案</b>
-            <span data-selected-plan>{planLabels[plan] ?? planLabels["3month"]}</span>
+          <div class="summary-card" data-plan-labels={planLabelsJson}>
+            <b>{copyText(pageCopy, "order.summary.label", "已選方案")}</b>
+            <span data-selected-plan>{selectedPlanLabel}</span>
             <small data-selected-frequency>{frequency}</small>
           </div>
         </div>
@@ -35,38 +38,43 @@ const planLabels: Record<string, string> = {
           <input type="hidden" name="frequency" value={frequency} />
 
           <label>
-            <span>姓名</span>
-            <input name="name" autocomplete="name" required placeholder="請輸入姓名" />
+            <span>{copyText(pageCopy, "order.form.name.label", "姓名")}</span>
+            <input name="name" autocomplete="name" required placeholder={copyText(pageCopy, "order.form.name.placeholder", "請輸入姓名")} />
           </label>
 
           <label>
-            <span>電話</span>
-            <input name="phone" autocomplete="tel" inputmode="tel" required placeholder="09xx xxx xxx" />
+            <span>{copyText(pageCopy, "order.form.phone.label", "電話")}</span>
+            <input name="phone" autocomplete="tel" inputmode="tel" required placeholder={copyText(pageCopy, "order.form.phone.placeholder", "09xx xxx xxx")} />
+          </label>
+
+          <label>
+            <span>{copyText(pageCopy, "order.form.lineId.label", "Line ID")}</span>
+            <input name="lineId" autocomplete="off" placeholder={copyText(pageCopy, "order.form.lineId.placeholder", "例如：@LittleShepherd 或您的 Line ID")} />
           </label>
 
           <fieldset>
-            <legend>配送地點或配送門市</legend>
+            <legend>{copyText(pageCopy, "order.form.deliveryType.legend", "配送地點或配送門市")}</legend>
             <label class="radio-row">
               <input type="radio" name="deliveryType" value="配送地點" checked />
-              <span>配送地點</span>
+              <span>{copyText(pageCopy, "order.form.deliveryType.address", "配送地點")}</span>
             </label>
             <label class="radio-row">
               <input type="radio" name="deliveryType" value="配送門市" />
-              <span>配送門市</span>
+              <span>{copyText(pageCopy, "order.form.deliveryType.store", "配送門市")}</span>
             </label>
           </fieldset>
 
           <label>
-            <span>地址 / 門市名稱</span>
-            <textarea name="deliveryPlace" required rows="3" placeholder="例如：台中市區地址，或指定配送門市"></textarea>
+            <span>{copyText(pageCopy, "order.form.deliveryPlace.label", "地址 / 門市名稱")}</span>
+            <textarea name="deliveryPlace" required rows="3" placeholder={copyText(pageCopy, "order.form.deliveryPlace.placeholder", "例如：台中市區地址，或指定配送門市")}></textarea>
           </label>
 
           <label>
-            <span>備註</span>
-            <textarea name="note" rows="3" placeholder="可填寫方便聯絡時間、希望配送日或其他需求"></textarea>
+            <span>{copyText(pageCopy, "order.form.note.label", "備註")}</span>
+            <textarea name="note" rows="3" placeholder={copyText(pageCopy, "order.form.note.placeholder", "可填寫方便聯絡時間、希望配送日或其他需求")}></textarea>
           </label>
 
-          <button class="button" type="submit">送出並通知 Line</button>
+          <button class="button" type="submit">{copyText(pageCopy, "order.form.submit", "送出並通知 Line")}</button>
           <p class="form-status" data-form-status role="status"></p>
         </form>
       </div>
@@ -77,12 +85,32 @@ const planLabels: Record<string, string> = {
 <script>
   const form = document.querySelector("[data-order-form]");
   const status = document.querySelector("[data-form-status]");
+  const summaryCard = document.querySelector(".summary-card");
+  const selectedPlan = document.querySelector("[data-selected-plan]");
+  const selectedFrequency = document.querySelector("[data-selected-frequency]");
+  const planInput = form?.querySelector("input[name='plan']");
+  const frequencyInput = form?.querySelector("input[name='frequency']");
+  const planLabels = JSON.parse(summaryCard?.dataset.planLabels || "{}");
+  const params = new URLSearchParams(window.location.search);
+  const currentPlan = params.get("plan");
+  const currentFrequency = params.get("frequency");
+
+  if (currentPlan && planInput && selectedPlan) {
+    planInput.value = currentPlan;
+    selectedPlan.textContent = planLabels[currentPlan] || planLabels["3month"] || selectedPlan.textContent;
+  }
+
+  if (currentFrequency && frequencyInput && selectedFrequency) {
+    frequencyInput.value = currentFrequency;
+    selectedFrequency.textContent = currentFrequency;
+  }
 
   function lineFallbackUrl(payload) {
     const message = [
       "小牧人羊奶訂單",
       `姓名：${payload.name || ""}`,
       `電話：${payload.phone || ""}`,
+      payload.lineId ? `Line ID：${payload.lineId}` : "",
       `配送方式：${payload.deliveryType || ""}`,
       `配送地點/門市：${payload.deliveryPlace || ""}`,
       `方案：${document.querySelector("[data-selected-plan]")?.textContent?.trim() || ""}`,

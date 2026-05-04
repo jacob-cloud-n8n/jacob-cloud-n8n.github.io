@@ -196,22 +196,29 @@ async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, i
   const cached = databaseCache.get(cacheKey);
   if (cached && cached.expiresAt > Date.now()) return cached.value.map(mapper);
 
-  const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      "Notion-Version": notionVersion
-    },
-    body: JSON.stringify({ page_size: 50 })
-  });
+  const pages: NotionPage[] = [];
+  let startCursor: string | undefined;
 
-  if (!response.ok) {
-    throw new Error(`Notion query failed: ${response.status}`);
-  }
+  do {
+    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Notion-Version": notionVersion
+      },
+      body: JSON.stringify({ page_size: 100, start_cursor: startCursor })
+    });
 
-  const payload = await response.json();
-  const pages = payload.results ?? [];
+    if (!response.ok) {
+      throw new Error(`Notion query failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    pages.push(...(payload.results ?? []));
+    startCursor = payload.has_more ? payload.next_cursor : undefined;
+  } while (startCursor);
+
   const ttl = cacheSeconds();
   if (ttl > 0) {
     databaseCache.set(cacheKey, {

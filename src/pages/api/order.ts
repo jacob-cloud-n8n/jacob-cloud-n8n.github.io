@@ -2,7 +2,8 @@ import type { APIRoute } from "astro";
 
 const planLabels: Record<string, string> = {
   "3month": "一次訂購三個月，享9折價",
-  "6month": "一次訂購6個月，享85折價"
+  "6month": "一次訂購6個月，享85折價",
+  "trial": "單次訂購"
 };
 
 const notionVersion = "2022-06-28";
@@ -21,6 +22,7 @@ function lineFallbackUrl(order: Order): string {
     "小牧人羊奶訂單",
     `姓名：${order.name}`,
     `電話：${order.phone}`,
+    order.lineId ? `Line ID：${order.lineId}` : "",
     `配送方式：${order.deliveryType}`,
     `配送地點/門市：${order.deliveryPlace}`,
     `方案：${order.plan}`,
@@ -34,6 +36,7 @@ function lineFallbackUrl(order: Order): string {
 type Order = {
   name: string;
   phone: string;
+  lineId: string;
   deliveryType: string;
   deliveryPlace: string;
   plan: string;
@@ -49,6 +52,7 @@ async function createNotionOrder(order: Order): Promise<boolean> {
 
   const note = [
     order.note,
+    order.lineId ? `Line ID：${order.lineId}` : "",
     `配送方式：${order.deliveryType}`,
     `配送地點/門市：${order.deliveryPlace}`,
     `方案：${order.plan}`,
@@ -100,6 +104,7 @@ export const POST: APIRoute = async ({ request }) => {
     const order = {
       name: clean(body.name),
       phone: clean(body.phone),
+      lineId: clean(body.lineId),
       deliveryType: clean(body.deliveryType),
       deliveryPlace: clean(body.deliveryPlace),
       plan: planLabels[clean(body.plan)] ?? clean(body.plan),
