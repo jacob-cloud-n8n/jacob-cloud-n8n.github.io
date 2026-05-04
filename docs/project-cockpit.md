@@ -1,6 +1,6 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-03
+Last updated: 2026-05-04
 
 ## Current Status
 
@@ -8,7 +8,7 @@ Last updated: 2026-05-03
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新部署：`cad31f6 Adjust news side card and product image slot` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 最新部署：`b75eb55 Fix official Line add friend link` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
 - 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
@@ -33,6 +33,13 @@ Last updated: 2026-05-03
 - 最新消息內頁右側卡片目前顯示下一則消息的圖片、標題與摘要，按鈕導向下一則消息。
 
 ## Work Log
+
+### 2026-05-04
+
+- 修正加入官方 Line 頁的「立即掃描加入」按鈕：按鈕改連到官方 LINE 加好友連結 `https://lin.ee/xFMuRx5`，QR 圖仍使用官方 QR 圖網址。
+- 修正 Notion `line.cta.url` 欄位誤貼官方 HTML 片段造成 `/line/<a...>` 404 的問題；前台已加入 URL 正規化，會自動從官方 HTML 中抽出 `lin.ee` 或 `line.me` 連結。
+- 同步更新 Notion `line.cta.url` 為乾淨 URL，並更新 `astro-notion-zeabur-site` 技能，將此流程納入後續同類專案規則。
+- Server build、Static preview build 與 Zeabur 正式部署均已驗證通過。
 
 ### 2026-05-03
 
