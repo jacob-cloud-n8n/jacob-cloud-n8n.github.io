@@ -8,7 +8,7 @@ Last updated: 2026-05-04
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新部署：`b75eb55 Fix official Line add friend link` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 最新部署：`9a11ae2 Connect delivery and order fields to Notion` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
 - 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
@@ -36,6 +36,12 @@ Last updated: 2026-05-04
 
 ### 2026-05-04
 
+- 修正配送方案頁：選擇「單次訂購」時，訂單摘要會同步更新瓶數、單瓶均價與總金額，確認訂閱連結會帶入正確方案與配送頻率。
+- 修正訂單頁：已選方案會依 URL 參數更新，新增 `Line ID` 欄位，送出時會一起寫入 Notion 訂單備註與 LINE 備援訊息。
+- 補齊配送方案與訂單表單的 Notion 可維護欄位，包含配送方式卡片、摘要標籤、按鈕文字、表單 label 與 placeholder。
+- 修正 Notion database query 分頁讀取，避免頁面維護資料超過 50/100 筆後，新欄位無法被前台讀到。
+- 已將這次問題更新到 `astro-notion-zeabur-site` 技能，避免後續專案再次漏掉配送/訂單狀態同步與 Notion 分頁查詢。
+- Server build 通過，提交 `9a11ae2` 已推送並部署到 Zeabur，正式服務狀態為 `RUNNING`。
 - 修正加入官方 Line 頁的「立即掃描加入」按鈕：按鈕改連到官方 LINE 加好友連結 `https://lin.ee/xFMuRx5`，QR 圖仍使用官方 QR 圖網址。
 - 修正 Notion `line.cta.url` 欄位誤貼官方 HTML 片段造成 `/line/<a...>` 404 的問題；前台已加入 URL 正規化，會自動從官方 HTML 中抽出 `lin.ee` 或 `line.me` 連結。
 - 同步更新 Notion `line.cta.url` 為乾淨 URL，並更新 `astro-notion-zeabur-site` 技能，將此流程納入後續同類專案規則。
