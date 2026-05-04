@@ -5,9 +5,15 @@ import { copyImage, copyText } from "@lib/page-copy";
 
 const pageCopy = await getPageCopy();
 const officialLineQrUrl = "https://qr-official.line.me/gs/M_vmg9748m_GW.png?oat_content=qr";
-const configuredLineUrl = import.meta.env.PUBLIC_LINE_URL ?? officialLineQrUrl;
+const officialLineAddUrl = "https://lin.ee/xFMuRx5";
+const configuredLineUrl = import.meta.env.PUBLIC_LINE_URL ?? officialLineAddUrl;
 const lineUrlCopy = copyText(pageCopy, "line.cta.url", configuredLineUrl);
-const lineUrl = lineUrlCopy === "PUBLIC_LINE_URL" ? configuredLineUrl : lineUrlCopy;
+const normalizeLineUrl = (value: string) => {
+  const rawValue = value === "PUBLIC_LINE_URL" ? configuredLineUrl : value;
+  const match = rawValue.match(/https:\/\/(?:lin\.ee|line\.me)\/[^\s"'<>\\)\]]+/);
+  return match?.[0] ?? (rawValue.startsWith("http") ? rawValue : configuredLineUrl);
+};
+const lineUrl = normalizeLineUrl(lineUrlCopy);
 const qrImage = copyText(pageCopy, "line.qr.image", "") || copyImage(pageCopy, "line.qr.image", officialLineQrUrl);
 ---
 
