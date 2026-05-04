@@ -4,10 +4,11 @@ import { getPageCopy } from "@lib/notion";
 import { copyImage, copyText } from "@lib/page-copy";
 
 const pageCopy = await getPageCopy();
-const configuredLineUrl = import.meta.env.PUBLIC_LINE_URL ?? "https://line.me/R/ti/p/@little-shepherd";
+const officialLineQrUrl = "https://qr-official.line.me/gs/M_vmg9748m_GW.png?oat_content=qr";
+const configuredLineUrl = import.meta.env.PUBLIC_LINE_URL ?? officialLineQrUrl;
 const lineUrlCopy = copyText(pageCopy, "line.cta.url", configuredLineUrl);
 const lineUrl = lineUrlCopy === "PUBLIC_LINE_URL" ? configuredLineUrl : lineUrlCopy;
-const qrImage = copyImage(pageCopy, "line.qr.image", "");
+const qrImage = copyText(pageCopy, "line.qr.image", "") || copyImage(pageCopy, "line.qr.image", officialLineQrUrl);
 ---
 
 <MainLayout
@@ -46,7 +47,7 @@ const qrImage = copyImage(pageCopy, "line.qr.image", "");
             ) : (
               <div class="qr">LINE</div>
             )}
-            <a class="button" href={lineUrl}>立即掃描加入</a>
+            <a class="button" href={lineUrl} target="_blank" rel="noopener noreferrer">立即掃描加入</a>
             <small>或搜尋 LINE ID：@LittleShepherd</small>
           </article>
         </div>
