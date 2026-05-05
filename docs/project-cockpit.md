@@ -8,7 +8,7 @@ Last updated: 2026-05-05
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新部署：`9a11ae2 Connect delivery and order fields to Notion` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 最新部署：`2907721 Fix Notion milestone parsing` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
 - 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
