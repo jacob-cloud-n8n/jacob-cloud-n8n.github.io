@@ -172,11 +172,17 @@ function milestoneFromChineseContent(page: NotionPage, order: number): BrandEntr
   const props = page.properties ?? {};
   const rawTitle = titleText(props["品牌說明"]);
   const content = richText(props["內容"]) || richText(props["文字"]);
-  const isMilestoneRow = rawTitle.includes("大事記") || (!rawTitle && Boolean(content));
-  if (!isMilestoneRow || !content) return null;
+  const image = fileUrl(props["店面圖片"]) || fileUrl(props["圖片"]) || fileUrl(props["照片"]);
+  const isPageCopyKey = rawTitle.includes(".");
+  if (!content || isPageCopyKey) return null;
 
   const lines = content.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
   const firstLine = lines[0] ?? rawTitle;
+  const isMilestoneRow =
+    rawTitle.includes("大事記") ||
+    (Boolean(image) && /(故事的開始|脫離|摘星計畫|金典酒店|20\d{2}|2018年底)/.test(firstLine));
+  if (!isMilestoneRow) return null;
+
   const detail = lines.slice(1).join("\n") || content;
 
   return {
@@ -184,9 +190,18 @@ function milestoneFromChineseContent(page: NotionPage, order: number): BrandEntr
     type: "大事記",
     date: "",
     richContent: detail || content,
-    image: fileUrl(props["店面圖片"]) || "/images/goat-field.webp",
-    order
+    image: image || "/images/goat-field.webp",
+    order: milestoneOrder(firstLine || rawTitle, order)
   };
+}
+
+function milestoneOrder(title: string, fallback: number): number {
+  if (title.includes("故事的開始")) return 1;
+  if (title.includes("2018") || title.includes("脫離")) return 2;
+  if (title.includes("2021")) return 3;
+  if (title.includes("2024") || title.includes("金典酒店")) return 4;
+  if (title.includes("2025")) return 5;
+  return 1000 + fallback;
 }
 
 async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, index: number) => T): Promise<T[]> {
@@ -277,20 +292,12 @@ export async function getMilestones(): Promise<BrandEntry[]> {
   try {
     const pages = await queryDatabase<NotionPage>(import.meta.env.NOTION_BRAND_DB_ID || defaultBrandDatabaseId, (page) => page);
     const milestones: BrandEntry[] = [];
-    let inChineseMilestoneSection = false;
 
     pages.forEach((page, index) => {
       const props = page.properties ?? {};
-      const rawTitle = titleText(props["品牌說明"]);
-      if (rawTitle.includes("小牧人大事記")) {
-        inChineseMilestoneSection = true;
-      } else if (inChineseMilestoneSection && rawTitle) {
-        inChineseMilestoneSection = false;
-      }
-
-      if (inChineseMilestoneSection) {
-        const chineseMilestone = milestoneFromChineseContent(page, index);
-        if (chineseMilestone) milestones.push(chineseMilestone);
+      const chineseMilestone = milestoneFromChineseContent(page, index);
+      if (chineseMilestone) {
+        milestones.push(chineseMilestone);
         return;
       }
 

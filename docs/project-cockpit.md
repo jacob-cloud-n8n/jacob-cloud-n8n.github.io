@@ -41,8 +41,9 @@ Last updated: 2026-05-05
 - 導航按鈕使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 產生 Google Maps 連結，未來參加市集活動可改變定位目的地。
 - 已在 Notion「新官網首頁」資料庫補齊首頁三張精選商品卡維護欄位：`home.products.1.*`、`home.products.2.*`、`home.products.3.*`，每張卡包含 `sourceName`、`name`、`desc`、`price`、`image`。
 - 修正大事記資料不足時的 fallback：當 Notion 只讀到 1 筆大事記時，不再覆蓋完整 timeline，會回到原本 5 筆完整列表。
+- 再次修正大事記資料來源：改由品牌介紹資料庫中符合大事記圖文格式的 Notion 列產生 timeline，不再假設資料列必須連續排列在「小牧人大事記」標題下。
 - 補充專案規則：修特定頁面時不得動到無關頁面；若需調整共用程式或同步影響其他頁面，需先說明原因並取得確認。
-- 已將這次問題更新到 `astro-notion-zeabur-site` 技能，提醒後續專案首頁精選商品不可使用 `getProducts().slice(0, 3)`，CTA 區塊也不能保留無功能輸入欄。
+- 已將這次問題更新到 `astro-notion-zeabur-site` 技能，提醒後續專案首頁精選商品不可使用 `getProducts().slice(0, 3)`，CTA 區塊也不能保留無功能輸入欄，大事記不可用連續區段假設判斷 Notion 資料。
 - Server build 與 Static preview build 均已驗證通過。
 
 ### 2026-05-04
