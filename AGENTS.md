@@ -57,6 +57,7 @@
 - Preserve user changes and existing Git history.
 - Before edits, inspect current status and relevant files.
 - Keep changes scoped to the requested task.
+- Do not modify unrelated pages while fixing a specific page. If a fix requires touching shared code or synchronizing another page, explain the affected page(s) and reason first, then proceed only after confirmation.
 - Do not commit or push unless the user asks.
 
 ## Privacy

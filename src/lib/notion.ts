@@ -307,7 +307,7 @@ export async function getMilestones(): Promise<BrandEntry[]> {
     });
 
     milestones.sort((a, b) => a.order - b.order);
-    return milestones.length > 0 ? milestones : milestoneEntries;
+    return milestones.length > 1 ? milestones : milestoneEntries;
   } catch (error) {
     console.warn(error);
     return milestoneEntries;

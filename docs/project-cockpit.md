@@ -39,6 +39,9 @@ Last updated: 2026-05-05
 - 修正首頁精選商品：改用固定首頁商品槽位，不再直接取產品資料庫前三筆，避免 Notion 產品排序或新增商品時自動換掉首頁圖文。
 - 修正首頁訂閱區：移除沒有送出功能的 Email/電話輸入框，改為「前往商品廚窗」與「導航到小牧人羊奶」兩顆按鈕。
 - 導航按鈕使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 產生 Google Maps 連結，未來參加市集活動可改變定位目的地。
+- 已在 Notion「新官網首頁」資料庫補齊首頁三張精選商品卡維護欄位：`home.products.1.*`、`home.products.2.*`、`home.products.3.*`，每張卡包含 `sourceName`、`name`、`desc`、`price`、`image`。
+- 修正大事記資料不足時的 fallback：當 Notion 只讀到 1 筆大事記時，不再覆蓋完整 timeline，會回到原本 5 筆完整列表。
+- 補充專案規則：修特定頁面時不得動到無關頁面；若需調整共用程式或同步影響其他頁面，需先說明原因並取得確認。
 - 已將這次問題更新到 `astro-notion-zeabur-site` 技能，提醒後續專案首頁精選商品不可使用 `getProducts().slice(0, 3)`，CTA 區塊也不能保留無功能輸入欄。
 - Server build 與 Static preview build 均已驗證通過。
 
