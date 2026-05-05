@@ -1,12 +1,27 @@
 ---
 import MainLayout from "@layouts/MainLayout.astro";
+import { fallbackProducts, type Product } from "@lib/content";
 import { getNews, getPageCopy, getProducts } from "@lib/notion";
 import { copyImage, copyText } from "@lib/page-copy";
-import { siteNavigation } from "@lib/site";
 
 const pageCopy = await getPageCopy();
-const products = (await getProducts()).slice(0, 3);
+const allProducts = await getProducts();
 const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+const homeProductFallbacks = fallbackProducts.slice(0, 3);
+const products = homeProductFallbacks.map((fallback, index): Product => {
+  const key = `home.products.${index + 1}`;
+  const sourceName = copyText(pageCopy, `${key}.sourceName`, fallback.name);
+  const matchedProduct = allProducts.find((product) => product.name === sourceName) ?? fallback;
+  const priceText = copyText(pageCopy, `${key}.price`, String(matchedProduct.price));
+
+  return {
+    ...matchedProduct,
+    name: copyText(pageCopy, `${key}.name`, matchedProduct.name),
+    desc: copyText(pageCopy, `${key}.desc`, matchedProduct.desc),
+    price: Number.parseInt(priceText.replace(/[^\d]/g, ""), 10) || matchedProduct.price,
+    image: copyImage(pageCopy, `${key}.image`, matchedProduct.image)
+  };
+});
 ---
 
 <MainLayout
@@ -91,8 +106,7 @@ const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)
         <h2 set:html={copyText(pageCopy, "home.subscribe.title", "現在訂閱，<br />開啟您的晨間牧場食光")}></h2>
         <p>{copyText(pageCopy, "home.subscribe.description", "加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。")}</p>
         <div class="subscribe-form">
-          <input type="email" name="email" placeholder="Email / 電話輸入" aria-label="Email 或電話" />
-          <a class="button" href={siteNavigation.googleMapsUrl} target="_blank" rel="noopener noreferrer">導航到小牧人羊奶</a>
+          <a class="button" href="/products/">{copyText(pageCopy, "home.subscribe.button", "前往商品廚窗")}</a>
         </div>
       </div>
     </section>
@@ -358,16 +372,8 @@ const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)
   }
 
   .subscribe-form .button {
+    min-width: min(100%, 260px);
     white-space: nowrap;
-  }
-
-  input {
-    flex: 1;
-    min-width: 0;
-    border: 0;
-    border-radius: 999px;
-    padding: 0 18px;
-    background: #fff;
   }
 
   @media (max-width: 860px) {
