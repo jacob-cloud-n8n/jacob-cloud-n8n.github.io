@@ -3,6 +3,7 @@ import MainLayout from "@layouts/MainLayout.astro";
 import { fallbackProducts, type Product } from "@lib/content";
 import { getNews, getPageCopy, getProducts } from "@lib/notion";
 import { copyImage, copyText } from "@lib/page-copy";
+import { siteNavigation } from "@lib/site";
 
 const pageCopy = await getPageCopy();
 const allProducts = await getProducts();
@@ -107,6 +108,9 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
         <p>{copyText(pageCopy, "home.subscribe.description", "加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。")}</p>
         <div class="subscribe-form">
           <a class="button" href="/products/">{copyText(pageCopy, "home.subscribe.button", "前往商品廚窗")}</a>
+          <a class="button secondary-light" href={siteNavigation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+            {copyText(pageCopy, "home.subscribe.navigationButton", `導航到${siteNavigation.name}`)}
+          </a>
         </div>
       </div>
     </section>
@@ -365,15 +369,25 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
 
   .subscribe-form {
     display: flex;
-    width: min(100%, 540px);
-    gap: 10px;
+    width: min(100%, 680px);
+    gap: 12px;
     margin-inline: auto;
     justify-content: center;
   }
 
   .subscribe-form .button {
-    min-width: min(100%, 260px);
+    min-width: min(100%, 250px);
     white-space: nowrap;
+  }
+
+  .subscribe-form .secondary-light {
+    border: 1px solid rgba(255, 248, 243, 0.72);
+    background: rgba(255, 248, 243, 0.94);
+    color: #3f6256;
+  }
+
+  .subscribe-form .secondary-light:hover {
+    background: #fff8f3;
   }
 
   @media (max-width: 860px) {
