@@ -1,0 +1,166 @@
+:root {
+  --leaf: #9caf78;
+  --sage: #7f8d7e;
+  --moss: #526350;
+  --wood: #b99e7e;
+  --rice: #f7f4ec;
+  --linen: #fbfaf6;
+  --paper: #ffffff;
+  --ink: #233027;
+  --muted: #7b8178;
+  --line: rgba(82, 99, 80, 0.18);
+  --shadow: 0 18px 50px rgba(82, 99, 80, 0.11);
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--linen);
+  color: var(--ink);
+  font-family: "Noto Sans TC", "PingFang TC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.75;
+}
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+.page {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(82, 99, 80, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(82, 99, 80, 0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(251, 250, 246, 0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.brand { display: flex; align-items: center; gap: 12px; min-width: 176px; }
+.brand img { width: 46px; height: 46px; object-fit: contain; mix-blend-mode: multiply; }
+.brand-name { font-family: "Noto Serif TC", "Songti TC", serif; font-size: 18px; font-weight: 800; }
+.brand-sub { display: block; color: var(--muted); font-size: 12px; margin-top: -2px; }
+.nav-links { display: flex; align-items: center; gap: 20px; color: var(--moss); font-size: 14px; }
+.nav-links a { padding: 8px 0; }
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid var(--moss);
+  background: var(--moss);
+  color: #fff;
+  font-weight: 750;
+  box-shadow: 0 10px 24px rgba(82, 99, 80, 0.2);
+}
+.cta.secondary { background: transparent; color: var(--moss); box-shadow: none; }
+
+.container { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+.hero {
+  min-height: calc(100vh - 74px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 430px;
+  align-items: center;
+  gap: 70px;
+  padding: 72px 0 48px;
+}
+.page-hero { padding: 84px 0 56px; border-bottom: 1px solid var(--line); }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--moss);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--wood); }
+h1, h2, h3, p { margin: 0; }
+h1 {
+  margin-top: 24px;
+  font-family: "Noto Serif TC", "Songti TC", serif;
+  font-size: clamp(42px, 6vw, 82px);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+h2 {
+  font-family: "Noto Serif TC", "Songti TC", serif;
+  font-size: clamp(30px, 4vw, 56px);
+  line-height: 1.18;
+}
+h3 { font-size: 23px; line-height: 1.35; }
+.lede { margin-top: 24px; max-width: 680px; color: #4f5a50; font-size: 19px; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+
+.hero-card, .card, .photo-card, .price-card {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.hero-card { padding: 28px; display: grid; gap: 18px; }
+.hero-card img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 55% 38%; border-radius: 6px; }
+.caption { color: var(--muted); font-size: 13px; }
+
+.section { padding: 72px 0; border-top: 1px solid var(--line); }
+.section:first-child { border-top: 0; }
+.split { display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(320px, 0.45fr); gap: 26px; align-items: start; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.card { padding: 26px; display: grid; gap: 14px; }
+.card p, .price-card p { color: var(--muted); }
+.label { color: var(--wood); font-size: 13px; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
+.quote {
+  padding-left: 22px;
+  border-left: 3px solid var(--leaf);
+  font-family: "Noto Serif TC", "Songti TC", serif;
+  font-size: clamp(24px, 3vw, 38px);
+  line-height: 1.35;
+  color: var(--moss);
+}
+.photo-card { overflow: hidden; }
+.photo-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.photo-card.portrait img { aspect-ratio: 4 / 5; object-position: 55% 38%; }
+.photo-card-copy { padding: 22px; display: grid; gap: 8px; }
+.steps { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.step { min-height: 210px; padding: 22px; background: rgba(255,255,255,.72); border-right: 1px solid var(--line); display: grid; align-content: space-between; }
+.step:last-child { border-right: 0; }
+.price-card { padding: 26px; display: grid; gap: 10px; }
+.price { color: var(--moss); font-family: "Noto Serif TC", "Songti TC", serif; font-size: 34px; line-height: 1.1; }
+.note { color: #b8473c; font-weight: 850; }
+.pricing-image { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); background: #fff; }
+.fake-field { min-height: 54px; border: 1px solid var(--line); border-radius: 6px; padding: 14px; color: var(--muted); background: var(--linen); }
+.fake-field.large { min-height: 118px; }
+footer { padding: 42px 0 58px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 20px; }
+.floating-line { position: fixed; right: 24px; bottom: 24px; z-index: 30; }
+
+@media (max-width: 980px) {
+  .nav-links { display: none; }
+  .hero, .split, .grid-3, .grid-2, .steps { grid-template-columns: 1fr; }
+  .hero { min-height: auto; gap: 34px; padding-top: 48px; }
+  .step { border-right: 0; border-bottom: 1px solid var(--line); min-height: 160px; }
+  .step:last-child { border-bottom: 0; }
+}
+@media (max-width: 640px) {
+  .container, .nav-inner { width: min(100% - 28px, 1180px); }
+  .brand-sub { display: none; }
+  .actions { display: grid; }
+  .cta { width: 100%; }
+  .floating-line { left: 14px; right: 14px; bottom: 14px; }
+}
