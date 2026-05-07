@@ -1,6 +1,6 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-05
+Last updated: 2026-05-07
 
 ## Current Status
 
@@ -33,6 +33,16 @@ Last updated: 2026-05-05
 - 最新消息內頁右側卡片目前顯示下一則消息的圖片、標題與摘要，按鈕導向下一則消息。
 
 ## Work Log
+
+### 2026-05-07
+
+- 使用 `huashu-design` 技能替「美地居家收納」建立客戶確認用網站初稿。
+- 美地預覽採獨立靜態路徑 `public/meidi-home/`，不改動小牧人既有 Astro 頁面、Notion CMS、Zeabur 設定或正式站路由。
+- 已拆成多頁式結構：首頁、服務項目、理念與師承、華琍老師、案例展示、流程與報價、預約諮詢。
+- 已納入客戶提供素材：美地 logo、華琍老師形象照、納爺體系培訓照片、流程與報價圖。
+- 已將客戶預覽部署到 GitHub Pages：`https://jacob-cloud-n8n.github.io/meidi-home/`。
+- 已提交並推送 `5d0342c Add Meidi Home client preview`，GitHub Pages workflow 已成功完成部署並確認預覽網址回應 `200`。
+- 本機 `design-drafts/` 僅作草稿工作區，已加入 `.gitignore`，避免後續收工或部署時誤提交工作草稿。
 
 ### 2026-05-05
 
@@ -105,6 +115,7 @@ Last updated: 2026-05-05
 
 ## Next Steps
 
+- 美地居家：請客戶確認多頁式初稿架構、文案、報價呈現與照片使用；正式上線前需補 LINE 官方 URL、服務區域、證書圖片與已授權且去識別化的案例照片。
 - 確認正式 Zeabur 環境已填入所有必要 Notion 與公開網址變數。
 - 視需求補齊 GitHub Pages workflow 的新聞、配送與訂單資料庫變數。
 - 每次調整 Notion schema 後，同步更新 README 與本 cockpit。
