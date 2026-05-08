@@ -1,6 +1,6 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-07
+Last updated: 2026-05-08
 
 ## Current Status
 
@@ -33,6 +33,16 @@ Last updated: 2026-05-07
 - 最新消息內頁右側卡片目前顯示下一則消息的圖片、標題與摘要，按鈕導向下一則消息。
 
 ## Work Log
+
+### 2026-05-08
+
+- 依客戶確認流程，將 Stitch 視覺設計初稿整理成第二套「美地居家收納」客戶預覽。
+- 新版採獨立靜態路徑 `public/meidi-home-stitch/`，與既有 `public/meidi-home/` 並存，不影響小牧人 Astro 頁面、Notion CMS、Zeabur 設定或正式站路由。
+- Stitch 版已拆成多頁式結構：首頁、關於美地、收納團隊、服務項目、精選案例、預約聯繫。
+- 已依規劃資料修正：導覽列改為繁中；首頁移除內部「網站架構藍圖 / 導流動線」內容，改為客戶可見的六大空間分類；關於美地刪除與收納團隊重複的資歷與社群區塊。
+- 已納入客戶提供素材與內容：美地 logo、華琍老師形象照、納爺體系培訓照片、流程與報價圖、品牌方法論、服務分類、流程與報價。
+- 已提交並推送 `bcff254 Add Meidi Stitch preview`，手動觸發 GitHub Pages workflow 成功完成部署。
+- Stitch 版客戶預覽網址：`https://jacob-cloud-n8n.github.io/meidi-home-stitch/`，已確認公開網址回應 `200`。
 
 ### 2026-05-07
 
@@ -115,7 +125,7 @@ Last updated: 2026-05-07
 
 ## Next Steps
 
-- 美地居家：請客戶確認多頁式初稿架構、文案、報價呈現與照片使用；正式上線前需補 LINE 官方 URL、服務區域、證書圖片與已授權且去識別化的案例照片。
+- 美地居家：請客戶比較既有預覽 `https://jacob-cloud-n8n.github.io/meidi-home/` 與 Stitch 版預覽 `https://jacob-cloud-n8n.github.io/meidi-home-stitch/`，確認採用方向、文案、報價呈現與照片使用；正式上線前需補 LINE 官方 URL、服務區域、證書圖片與已授權且去識別化的案例照片。
 - 確認正式 Zeabur 環境已填入所有必要 Notion 與公開網址變數。
 - 視需求補齊 GitHub Pages workflow 的新聞、配送與訂單資料庫變數。
 - 每次調整 Notion schema 後，同步更新 README 與本 cockpit。
