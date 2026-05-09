@@ -1,6 +1,6 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-09
+Last updated: 2026-05-10
 
 ## Current Status
 
@@ -8,7 +8,7 @@ Last updated: 2026-05-09
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
 - README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新部署：`2907721 Fix Notion milestone parsing` 已推送並部署到 Zeabur `untitled`，正式服務狀態為 `RUNNING`。
+- 最新小牧人程式提交：`caf5cee Split Meidi into independent repo`，已移除美地程式與切站設定；小牧人正式服務仍為 `RUNNING`。
 - 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
 - Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
 
@@ -33,6 +33,14 @@ Last updated: 2026-05-09
 - 最新消息內頁右側卡片目前顯示下一則消息的圖片、標題與摘要，按鈕導向下一則消息。
 
 ## Work Log
+
+### 2026-05-10
+
+- 依長期維護決策完成美地拆分收尾：美地正式站由獨立 repo `jacob-cloud-n8n/meidi-home-site` 與 Zeabur 服務 `meidi-home-site-v2` 承接。
+- 美地正式網址 `https://meidi-home-untitled-20260509.zeabur.app/` 已確認首頁與 `/booking/` 回應 `200`，表單寫入 Notion 回傳 `mode: "notion"`，測試資料已封存。
+- 舊 Zeabur 美地服務 `meidi-home-site` 已執行刪除；Zeabur API 回報 deletion already scheduled，目前該服務沒有 domain，deployments 皆為 `REMOVED`。
+- 已更新 `astro-notion-zeabur-site` skill：正式站預設一個 Astro repo 對一個 Zeabur 服務；遇到同 repo 多網站時需先提醒維護風險並優先建議拆 repo。
+- Notion token 依使用者指示暫不輪替，後續仍需避免寫入文件、Git 或前端輸出。
 
 ### 2026-05-09
 
