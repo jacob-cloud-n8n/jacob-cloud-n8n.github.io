@@ -46,6 +46,8 @@ Last updated: 2026-05-09
 - 已補入美地官方 LINE QR、LINE 連結、Facebook 連結、服務證書、車馬費另報與表單隱私提醒；IG / Threads 暫保留待補。
 - 客戶已建立美地 Notion 入口頁，已新增 `docs/meidi-notion-schema.md` 規劃各頁文案、圖片、服務、案例、團隊與諮詢表單資料庫。
 - 已將六個美地頁面資料庫補齊可維護欄位，並新增 `美地諮詢表單` Notion database；Astro 版 `/meidi-home-stitch/` 會讀取美地專用資料庫，表單寫入美地諮詢資料庫。
+- 已在 Zeabur `untitled` 空間新增獨立服務 `meidi-home-site`，不更動 `little-shepherd-site`；公開網址為 `https://meidi-home-untitled-20260509.zeabur.app/`，根目錄以 `PUBLIC_SITE_VARIANT=meidi` 導向美地頁面。
+- Zeabur 美地服務部署狀態為 `RUNNING`；首頁、預約頁與 Notion 表單寫入已驗證，測試表單資料已從 Notion 諮詢資料庫封存。
 
 ### 2026-05-08
 
