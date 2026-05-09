@@ -38,6 +38,7 @@ pnpm run dev
 - `NOTION_ORDER_DB_ID`
 - `NOTION_CACHE_SECONDS`
 - `PUBLIC_SITE_URL`
+- `PUBLIC_SITE_VARIANT`：預設留空；美地 Zeabur 獨立服務可設為 `meidi`，讓根目錄導向 `/meidi-home-stitch/`
 - `PUBLIC_LINE_URL`
 - `PUBLIC_NAVIGATION_NAME`
 - `PUBLIC_NAVIGATION_ADDRESS`
@@ -61,6 +62,8 @@ Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設
 配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `NOTION_ORDER_DB_ID`，訂單會由網站後端寫入 Notion「訂單資訊」資料庫，後續通知 Line 由 Notion/n8n 自動化處理。若 Notion 寫入失敗，系統會開啟 Line 訊息備援，讓顧客手動送出。
 
 美地居家收納使用獨立路徑 `/meidi-home-stitch/`，內容由「收納天地」頁面底下的六個資料庫維護：首頁、關於美地、收納團隊、服務項目、精選案例、預約聯繫。每列以 `名稱` 欄位存放前台 key，例如 `home.hero.title`、`team.social.facebook`、`booking.qr.image`；文字放在 `文字內容`，圖片放在 `圖片` 或 `圖片網址`，按鈕放在 `按鈕文字` 與 `按鈕連結`。預約表單會寫入 `NOTION_MEIDI_INQUIRY_DB_ID` 指定的「美地諮詢表單」資料庫。
+
+若要把同一份程式部署成美地獨立 Zeabur 服務，請在該服務設定 `PUBLIC_SITE_VARIANT=meidi`；原小牧人服務不要設定此值，即可維持小牧人首頁。
 
 ## Notion Schema
 

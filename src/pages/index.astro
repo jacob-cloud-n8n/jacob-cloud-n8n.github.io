@@ -5,6 +5,10 @@ import { getNews, getPageCopy, getProducts } from "@lib/notion";
 import { copyImage, copyText } from "@lib/page-copy";
 import { siteNavigation } from "@lib/site";
 
+if (import.meta.env.PUBLIC_SITE_VARIANT === "meidi") {
+  return Astro.redirect("/meidi-home-stitch/");
+}
+
 const pageCopy = await getPageCopy();
 const allProducts = await getProducts();
 const latestNews = (await getNews()).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
