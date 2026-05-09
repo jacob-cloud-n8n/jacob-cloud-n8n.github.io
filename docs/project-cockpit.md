@@ -41,6 +41,8 @@ Last updated: 2026-05-09
 - 依 `astro-notion-zeabur-site` 技能整理正式建置準備文件：`docs/meidi-astro-build-plan.md`。
 - 新增審稿註記板 `public/meidi-home-stitch/review.html`，可逐頁檢視首頁、關於美地、收納團隊、服務項目、精選案例、預約聯繫並輸入調整註記。
 - 美地建置仍維持獨立靜態路徑，不改動小牧人 Astro routes、Notion CMS、Zeabur 設定或正式站路由。
+- 依審稿註記調整 Stitch 版：首頁刪除「/ 方法論」、搬家打包獨立成分類、首頁導流標題改為「心動馬上行動」、服務頁新增搬家打包與 2 個擴充服務佔位、關於美地師承區標籤改為「師承研究室」。
+- 已補充 `docs/meidi-astro-build-plan.md` 的 Notion 串接建議步驟，包含資料庫規劃、fallback content、表單寫入、Zeabur env vars、隱私與授權檢查。
 
 ### 2026-05-08
 
