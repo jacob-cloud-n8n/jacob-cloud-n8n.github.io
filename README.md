@@ -10,7 +10,6 @@ Astro 官網專案，依據 Stitch 設計稿與最新頁面截圖建立六個頁
 - `/delivery/` 配送方案
 - `/order/` 填寫訂單
 - `/line/` 加入官方 Line
-- `/meidi-home-stitch/` 美地居家收納獨立網站
 
 `/brand-story/` 與 `/guangfu/` 保留為舊連結轉址。
 
@@ -38,18 +37,10 @@ pnpm run dev
 - `NOTION_ORDER_DB_ID`
 - `NOTION_CACHE_SECONDS`
 - `PUBLIC_SITE_URL`
-- `PUBLIC_SITE_VARIANT`：預設留空；美地 Zeabur 獨立服務可設為 `meidi`，讓根目錄導向 `/meidi-home-stitch/`
 - `PUBLIC_LINE_URL`
 - `PUBLIC_NAVIGATION_NAME`
 - `PUBLIC_NAVIGATION_ADDRESS`
 - `N8N_REDEPLOY_WEBHOOK`
-- `NOTION_MEIDI_HOME_DB_ID`
-- `NOTION_MEIDI_ABOUT_DB_ID`
-- `NOTION_MEIDI_TEAM_DB_ID`
-- `NOTION_MEIDI_SERVICES_DB_ID`
-- `NOTION_MEIDI_PORTFOLIO_DB_ID`
-- `NOTION_MEIDI_BOOKING_DB_ID`
-- `NOTION_MEIDI_INQUIRY_DB_ID`
 
 首頁「導航到小牧人羊奶」會使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 組成 Google 地圖搜尋連結。市集活動時只要更新地址即可切換導航目的地。
 
@@ -60,10 +51,6 @@ Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設
 首頁、最新消息列表、大事記、配送方案與加入 Line 頁面的區塊文案可由各自的頁面維護資料庫管理。每列的 `名稱` 或 `品牌說明` 欄位使用前台 key，例如 `home.hero.title`、`news.hero.description`、`line.benefits.1.title`；`前台位置` 說明該資料對應到網站哪個圖文位置。
 
 配送方案的「確認訂閱」會前往 `/order/`。正式部署在 Zeabur 時，請設定 `NOTION_ORDER_DB_ID`，訂單會由網站後端寫入 Notion「訂單資訊」資料庫，後續通知 Line 由 Notion/n8n 自動化處理。若 Notion 寫入失敗，系統會開啟 Line 訊息備援，讓顧客手動送出。
-
-美地居家收納使用獨立路徑 `/meidi-home-stitch/`，內容由「收納天地」頁面底下的六個資料庫維護：首頁、關於美地、收納團隊、服務項目、精選案例、預約聯繫。每列以 `名稱` 欄位存放前台 key，例如 `home.hero.title`、`team.social.facebook`、`booking.qr.image`；文字放在 `文字內容`，圖片放在 `圖片` 或 `圖片網址`，按鈕放在 `按鈕文字` 與 `按鈕連結`。預約表單會寫入 `NOTION_MEIDI_INQUIRY_DB_ID` 指定的「美地諮詢表單」資料庫。
-
-若要把同一份程式部署成美地獨立 Zeabur 服務，請在該服務設定 `PUBLIC_SITE_VARIANT=meidi`；原小牧人服務不要設定此值，即可維持小牧人首頁。
 
 ## Notion Schema
 

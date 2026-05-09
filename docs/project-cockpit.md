@@ -48,6 +48,8 @@ Last updated: 2026-05-09
 - 已將六個美地頁面資料庫補齊可維護欄位，並新增 `美地諮詢表單` Notion database；Astro 版 `/meidi-home-stitch/` 會讀取美地專用資料庫，表單寫入美地諮詢資料庫。
 - 已在 Zeabur `untitled` 空間新增獨立服務 `meidi-home-site`，不更動 `little-shepherd-site`；公開網址為 `https://meidi-home-untitled-20260509.zeabur.app/`，根目錄以 `PUBLIC_SITE_VARIANT=meidi` 導向美地頁面。
 - Zeabur 美地服務部署狀態為 `RUNNING`；首頁、預約頁與 Notion 表單寫入已驗證，測試表單資料已從 Notion 諮詢資料庫封存。
+- 長期維護決策：美地已拆成獨立 repo `jacob-cloud-n8n/meidi-home-site` 與新 Zeabur 服務 `meidi-home-site-v2`，原小牧人 repo 已移除美地 routes、API、public assets 與 `PUBLIC_SITE_VARIANT` 切換。
+- 美地客戶網址 `https://meidi-home-untitled-20260509.zeabur.app/` 已移到新 Zeabur 服務；新 repo 根目錄即為美地首頁，表單寫入 Notion 已驗證。
 
 ### 2026-05-08
 
