@@ -4,14 +4,12 @@ Online preview path after GitHub Pages deployment:
 
 `https://jacob-cloud-n8n.github.io/meidi-home-stitch/`
 
-This is a second design option based on the client's Stitch draft, while the existing preview remains at:
-
-`https://jacob-cloud-n8n.github.io/meidi-home/`
+This is the confirmed design direction based on the client's Stitch draft. The older `public/meidi-home/` preview has been removed after client confirmation.
 
 ## Source
 
 - Stitch draft directory: `/Users/jacob/Downloads/stitch_prd`
-- Imported Meidi content and assets from `public/meidi-home/`
+- Imported Meidi content and assets from the earlier Meidi preview and client-provided files.
 
 ## Pages
 
@@ -21,6 +19,7 @@ This is a second design option based on the client's Stitch draft, while the exi
 - `services.html`
 - `portfolio.html`
 - `booking.html`
+- `review.html` for annotated review notes; it is not linked in the main navigation.
 
 ## Notes
 
