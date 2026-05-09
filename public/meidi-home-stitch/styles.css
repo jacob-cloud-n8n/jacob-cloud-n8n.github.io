@@ -260,6 +260,21 @@ h3 { color: var(--primary); font-family: "Noto Serif TC", "Noto Serif", serif; f
   font-weight: 900;
   letter-spacing: 0.02em;
 }
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  height: 46px;
+  border: 1px solid rgba(74, 97, 82, 0.28);
+  border-radius: 999px;
+  color: var(--secondary);
+  font-weight: 900;
+}
+.social-link.pending {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .icon {
   width: 46px;
   height: 46px;
@@ -303,6 +318,7 @@ h3 { color: var(--primary); font-family: "Noto Serif TC", "Noto Serif", serif; f
 }
 .photo-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
 .photo-card.portrait img { aspect-ratio: 4 / 5; object-position: 55% 38%; }
+.photo-card.contain img { aspect-ratio: 4 / 5; object-fit: contain; background: #fff; padding: 16px; }
 .photo-copy { padding: 26px; }
 .quote {
   margin: 24px 0;
@@ -395,6 +411,23 @@ h3 { color: var(--primary); font-family: "Noto Serif TC", "Noto Serif", serif; f
 .form { display: grid; gap: 16px; }
 .field { min-height: 54px; padding: 14px 16px; border: 1px solid var(--outline); border-radius: var(--radius); background: var(--paper); color: var(--muted); }
 .field.large { min-height: 120px; }
+.contact-panel {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid rgba(74, 97, 82, 0.24);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+}
+.contact-panel img { width: 160px; aspect-ratio: 1; object-fit: contain; background: #fff; border-radius: 10px; }
+.privacy-note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
 .floating-contact {
   position: fixed;
   right: 24px;
@@ -433,5 +466,7 @@ footer { background: var(--primary); color: rgba(255,255,255,.78); margin-top: 7
   .actions { display: grid; }
   .button { width: 100%; }
   .floating-contact { left: 14px; right: 14px; justify-content: center; }
+  .contact-panel { grid-template-columns: 1fr; }
+  .contact-panel img { width: min(220px, 100%); justify-self: center; }
   .profile-item { grid-template-columns: 1fr; text-align: center; }
 }

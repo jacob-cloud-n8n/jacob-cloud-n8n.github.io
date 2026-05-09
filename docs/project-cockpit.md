@@ -43,6 +43,9 @@ Last updated: 2026-05-09
 - 美地建置仍維持獨立靜態路徑，不改動小牧人 Astro routes、Notion CMS、Zeabur 設定或正式站路由。
 - 依審稿註記調整 Stitch 版：首頁刪除「/ 方法論」、搬家打包獨立成分類、首頁導流標題改為「心動馬上行動」、服務頁新增搬家打包與 2 個擴充服務佔位、關於美地師承區標籤改為「師承研究室」。
 - 已補充 `docs/meidi-astro-build-plan.md` 的 Notion 串接建議步驟，包含資料庫規劃、fallback content、表單寫入、Zeabur env vars、隱私與授權檢查。
+- 已補入美地官方 LINE QR、LINE 連結、Facebook 連結、服務證書、車馬費另報與表單隱私提醒；IG / Threads 暫保留待補。
+- 客戶已建立美地 Notion 入口頁，已新增 `docs/meidi-notion-schema.md` 規劃各頁文案、圖片、服務、案例、團隊與諮詢表單資料庫。
+- 已將六個美地頁面資料庫補齊可維護欄位，並新增 `美地諮詢表單` Notion database；Astro 版 `/meidi-home-stitch/` 會讀取美地專用資料庫，表單寫入美地諮詢資料庫。
 
 ### 2026-05-08
 
