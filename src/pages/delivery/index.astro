@@ -23,7 +23,7 @@ const plans = [
   {
     value: "trial",
     title: copyText(pageCopy, "delivery.plan.trial.title", "單次訂購"),
-    desc: copyText(pageCopy, "delivery.plan.trial.desc", "先訂一次喝喝看，單次共6瓶"),
+    desc: copyText(pageCopy, "delivery.plan.trial.desc", "先訂一次喝喝看，單次配送 6 瓶（1000cc）"),
     price: copyText(pageCopy, "delivery.plan.trial.price", "平均每瓶 NT$225"),
     total: copyText(pageCopy, "delivery.plan.trial.total", "NT$ 1,350")
   }
@@ -105,6 +105,30 @@ const deliveryMethods = deliveryMethodFallbacks.map((method, index) => {
                 <p>{method.note}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section class="faq-section">
+          <div class="container">
+            <h2>{copyText(pageCopy, "delivery.faq.title", "常見問題")}</h2>
+            <div class="faq-grid">
+              <article>
+                <strong>羊奶可以保存多久？</strong>
+                <p>低溫殺菌羊奶冷藏保存約 5-7 天，建議收到後盡快飲用以確保新鮮度。</p>
+              </article>
+              <article>
+                <strong>可以只訂購單瓶嗎？</strong>
+                <p>可以！單瓶購買運費 $150 元。一次購買 6 瓶（滿 $1,200）即享免運，歡迎加入官方 Line 諮詢。</p>
+              </article>
+              <article>
+                <strong>配送範圍有哪些？</strong>
+                <p>台中市區專人配送（週三、週五），其他地區可透過冷藏宅配，詳情請加入官方 Line 確認。</p>
+              </article>
+              <article>
+                <strong>可以退貨或換貨嗎？</strong>
+                <p>食品類商品依消保法規定，除瑕疵品外不適用七天鑑賞期。如有品質問題請於收到 24 小時內聯繫我們。</p>
+              </article>
+            </div>
           </div>
         </section>
       </div>
@@ -359,9 +383,51 @@ const deliveryMethods = deliveryMethodFallbacks.map((method, index) => {
     font-size: 0.92rem;
   }
 
+  .faq-section {
+    max-width: 860px;
+    margin: 42px auto 0;
+    padding: 30px;
+    border-radius: 24px;
+    background: rgba(255, 248, 243, 0.88);
+    box-shadow: 0 10px 28px rgba(62, 54, 46, 0.08);
+  }
+
+  .faq-section h2 {
+    margin: 0 0 20px;
+    color: var(--color-primary-strong);
+    font-size: 1.55rem;
+    text-align: center;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .faq-grid article {
+    border: 1px solid rgba(130, 117, 97, 0.14);
+    border-radius: 18px;
+    padding: 20px;
+    background: #fff;
+  }
+
+  .faq-grid strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-primary-strong);
+  }
+
+  .faq-grid p {
+    margin: 0;
+    color: rgba(62, 54, 46, 0.72);
+    font-size: 0.92rem;
+  }
+
   @media (max-width: 820px) {
     .delivery-grid,
-    .method-grid {
+    .method-grid,
+    .faq-grid {
       grid-template-columns: 1fr;
     }
   }

@@ -107,7 +107,7 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
         <h2 set:html={copyText(pageCopy, "home.subscribe.title", "現在訂閱，<br />開啟您的晨間牧場食光")}></h2>
         <p>{copyText(pageCopy, "home.subscribe.description", "加入我們的配送方案，每週三次新鮮直送，讓全家人的健康從一瓶羊奶開始。")}</p>
         <div class="subscribe-form">
-          <a class="button" href="/products/">{copyText(pageCopy, "home.subscribe.button", "前往商品廚窗")}</a>
+          <a class="button" href="/delivery/">{copyText(pageCopy, "home.subscribe.button", "立即訂閱配送")}</a>
           <a class="button secondary-light" href={siteNavigation.googleMapsUrl} target="_blank" rel="noopener noreferrer">
             {copyText(pageCopy, "home.subscribe.navigationButton", `導航到${siteNavigation.name}`)}
           </a>
