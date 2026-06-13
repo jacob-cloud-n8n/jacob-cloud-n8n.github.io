@@ -49,6 +49,10 @@
 ## Deployment Notes
 
 - Zeabur uses `zeabur.json` with `pnpm run build` and `node ./dist/server/entry.mjs`.
+- Zeabur production service is `little-shepherd-site`, service ID `service-69f4a2e29df7668d96a5b52f`, project ID `69b3aa82da87c2b9576efd83`, environment ID `69b3aa826853f6f4f5f694c5`.
+- This Zeabur service is PREBUILT_V2 / container-registry deployed. GitHub push alone does not update production, and the dashboard "re-upload" UI is not the preferred path.
+- Deploy directly from the project root with: `npx zeabur deploy --project-id 69b3aa82da87c2b9576efd83 --service-id service-69f4a2e29df7668d96a5b52f -i=false`.
+- Verify deployment with `npx zeabur deployment list --service-id service-69f4a2e29df7668d96a5b52f --env-id 69b3aa826853f6f4f5f694c5 --json`, runtime logs, and `curl -I https://shepherd.zeabur.app/`.
 - GitHub Pages uses `.github/workflows/deploy-pages.yml` and sets `ASTRO_OUTPUT=static`.
 - Keep server-only behavior behind runtime checks or fallback paths so static preview builds remain usable.
 

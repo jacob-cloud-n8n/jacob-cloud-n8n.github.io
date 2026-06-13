@@ -1,16 +1,15 @@
 # 小牧人羊奶官網 Cockpit
 
-Last updated: 2026-05-10
+Last updated: 2026-06-13
 
 ## Current Status
 
 - Astro 官網專案已存在並有 Git 版本控制。
 - Remote: `https://github.com/jacob-cloud-n8n/jacob-cloud-n8n.github.io.git`
 - Branch: `main`
-- README、`.gitignore`、`pnpm-lock.yaml`、Zeabur 設定與 GitHub Pages workflow 已存在。
-- 最新小牧人程式提交：`caf5cee Split Meidi into independent repo`，已移除美地程式與切站設定；小牧人正式服務仍為 `RUNNING`。
-- 正式網址：`https://xiaomuren-untitled-20260501.zeabur.app/`
-- Firebase CLI 已登入，但此專案目前沒有 `firebase.json`、Firebase alias 或 active project。若未使用 Firebase，無需初始化。
+- 正式網址：`https://shepherd.zeabur.app/`
+- Zeabur 服務：`little-shepherd-site` (PREBUILT_V2, container registry 部署)
+- **部署方式**：非 GitHub 自動部署；不要走 Zeabur 後台「重新上傳」繞路，從專案根目錄直接執行 CLI 部署到既有 service。
 
 ## Runbook
 
@@ -18,6 +17,11 @@ Last updated: 2026-05-10
 - 一般建置：`pnpm run build`
 - 建置後啟動：`pnpm run start`
 - GitHub Pages 靜態建置：`ASTRO_OUTPUT=static pnpm run build`
+- Zeabur 正式部署：`npx zeabur deploy --project-id 69b3aa82da87c2b9576efd83 --service-id service-69f4a2e29df7668d96a5b52f -i=false`
+- Zeabur 部署驗證：
+  - `npx zeabur deployment list --service-id service-69f4a2e29df7668d96a5b52f --env-id 69b3aa826853f6f4f5f694c5 --json`
+  - `npx zeabur deployment log --deployment-id <deployment-id> --service-id service-69f4a2e29df7668d96a5b52f --type runtime`
+  - `curl -I https://shepherd.zeabur.app/`
 
 ## Content Sources
 
@@ -33,6 +37,15 @@ Last updated: 2026-05-10
 - 最新消息內頁右側卡片目前顯示下一則消息的圖片、標題與摘要，按鈕導向下一則消息。
 
 ## Work Log
+
+### 2026-06-13
+
+- 官網優化：CTA 統一指向 /delivery/、SEO（sitemap.xml、robots.txt、LocalBusiness 結構化資料）、配送方案 FAQ 區塊、Footer 社群連結（Line/FB/Threads/IG）、首頁信任元素區塊（7 個項目）
+- 信任元素包含：YouTube 許伯簡芝、PeoPo 公民新聞、三立電視、牧場紀錄、TikTok 網紅、聯合新聞網 UDN Travel、南投縣家畜疾病防治所健康檢查證明
+- Git commits: cf7deb1, 8048db7, f5e0594，已 push 到 GitHub
+- **Zeabur 部署問題與解法**：服務為 PREBUILT_V2 類型，使用 container registry 部署，非 GitHub 連結。Push GitHub 不會觸發部署；正確做法是直接用 `npx zeabur deploy --project-id 69b3aa82da87c2b9576efd83 --service-id service-69f4a2e29df7668d96a5b52f -i=false` 部署到既有服務。
+- 2026-06-13 已用上述 CLI 部署完成，deployment `6a2d4d6273e854406dfbdf31` 狀態 `RUNNING`；runtime log 顯示 `node ./dist/server/entry.mjs` 與 `[@astrojs/node] Server listening`，正式站 `https://shepherd.zeabur.app/` 回應 `200`。
+- 待辦：GA4 Measurement ID（用戶申請後提供）
 
 ### 2026-05-10
 
