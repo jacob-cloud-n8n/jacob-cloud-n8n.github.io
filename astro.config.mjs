@@ -10,7 +10,7 @@ export default defineConfig({
     : node({
         mode: "standalone"
       }),
-  site: "https://jacob-cloud-n8n.github.io",
+  site: process.env.SITE_URL || "https://shepherd.zeabur.app",
   image: {
     domains: ["localhost"]
   },

@@ -9,8 +9,130 @@ interface Props {
 }
 
 const { title, description, path = "/" } = Astro.props;
-const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? "https://little-shepherd.example.com";
+const siteUrl = import.meta.env.SITE_URL || process.env.SITE_URL || import.meta.env.PUBLIC_SITE_URL || "https://shepherd.zeabur.app";
 const canonical = new URL(path, siteUrl).toString();
+
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": `${siteUrl.replace(/\/$/, '')}/#localbusiness`,
+      "name": "小牧人羊奶",
+      "description": "100% 天然羊奶，牧場直送到餐桌，每週三次新鮮配送。",
+      "url": siteUrl,
+      "logo": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "image": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "telephone": "+886-983-060-446",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "新生路126號",
+        "addressLocality": "霧峰區",
+        "addressRegion": "台中市",
+        "postalCode": "413",
+        "addressCountry": "TW"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "24.0626",
+        "longitude": "120.7018"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "13:00",
+          "closes": "16:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "11:00",
+          "closes": "17:30"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Sunday",
+          "opens": "12:00",
+          "closes": "17:30"
+        }
+      ],
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "台中市"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "南投縣"
+        }
+      ],
+      "sameAs": [
+        "https://line.me/R/ti/p/@little-shepherd",
+        "https://www.facebook.com/profile.php?id=100057143992346",
+        "https://www.instagram.com/little_shepherd_goat_milk",
+        "https://www.threads.net/@little_shepherd_goat_milk"
+      ],
+      "priceRange": "$$"
+    },
+    {
+      "@type": "Product",
+      "@id": `${siteUrl.replace(/\/$/, '')}/#product-fresh-milk`,
+      "name": "鮮羊乳系列",
+      "description": "100% 天然純鮮羊乳，低溫殺菌，保留完整營養。",
+      "image": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "TWD",
+        "lowPrice": "40",
+        "highPrice": "150",
+        "offerCount": "2"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": `${siteUrl.replace(/\/$/, '')}/#product-yogurt`,
+      "name": "優酪乳系列",
+      "description": "小牧人天然羊奶發酵優酪乳，含豐富益生菌。",
+      "image": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "TWD",
+        "lowPrice": "50",
+        "highPrice": "180",
+        "offerCount": "1"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": `${siteUrl.replace(/\/$/, '')}/#product-pudding`,
+      "name": "手作甜點系列",
+      "description": "天然羊奶入料，細滑香Q的羊奶布丁與手作甜點。",
+      "image": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "TWD",
+        "lowPrice": "45",
+        "highPrice": "120",
+        "offerCount": "3"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": `${siteUrl.replace(/\/$/, '')}/#product-subscription`,
+      "name": "週配訂購方案",
+      "description": "每週三次新鮮直送到府，小牧人羊奶專人冷鏈配送服務。",
+      "image": `${siteUrl.replace(/\/$/, '')}/images/logo.webp`,
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "TWD",
+        "lowPrice": "500",
+        "highPrice": "2000",
+        "offerCount": "4"
+      }
+    }
+  ]
+};
 ---
 
 <!doctype html>
@@ -27,24 +149,9 @@ const canonical = new URL(path, siteUrl).toString();
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL("/images/goat-field.webp", siteUrl).toString()} />
     <meta property="og:site_name" content="小牧人羊奶" />
+    <meta property="og:locale" content="zh_TW" />
     <meta name="robots" content="index, follow" />
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "小牧人羊奶",
-        "description": "100% 天然羊奶，牧場直送到餐桌，每週三次新鮮配送。",
-        "url": "https://shepherd.zeabur.app",
-        "logo": "https://shepherd.zeabur.app/images/logo.webp",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "台中市",
-          "addressRegion": "台灣"
-        },
-        "areaServed": "台中市",
-        "priceRange": "$$"
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(localBusinessSchema)} />
     <link rel="icon" href="/images/logo.webp" />
     <link rel="sitemap" href="/sitemap.xml" />
   </head>
