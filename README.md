@@ -97,6 +97,8 @@ Zeabur SSR 模式會在伺服器端讀取 Notion。`NOTION_CACHE_SECONDS` 預設
 
 網站已支援常見中文欄位別名，例如產品可使用 `產品名稱`、`產品價格`、`產品分類`、`產品照片`、`產品簡介`；新聞可使用 `標題`、`摘要`、`內容`、`影片網址`。仍建議固定欄位命名，避免多人編輯時混淆。
 
+最新消息發布流程請見 [`docs/news-publishing-runbook.md`](docs/news-publishing-runbook.md)。這份 runbook 是給 agent 依 Jacob 拍板後發布公告用，包含 Notion 欄位、fallback 檔案、驗收指令與 Zeabur 部署邊界。
+
 ### Delivery_DB
 
 可選。若設定 `NOTION_DELIVERY_DB_ID`，配送方式會由此資料庫讀取：`Area`、`Schedule`、`Method`、`Minimum`、`Note`、`IsActive`。

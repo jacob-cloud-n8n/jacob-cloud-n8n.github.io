@@ -38,6 +38,10 @@ Last updated: 2026-06-13
 
 ## Work Log
 
+### 2026-07-10
+
+- 補上最新消息 agent 發布 runbook：`docs/news-publishing-runbook.md`。目前網站已具備 `/news/` 列表、`/news/[slug]/` 內頁、Notion `News_DB` 與 `src/lib/content.ts` fallback 結構；runbook 明確列出 Jacob `公告OK` 後的發布欄位、驗收指令與 Zeabur direct deploy 邊界。
+
 ### 2026-06-13
 
 - 官網優化：CTA 統一指向 /delivery/、SEO（sitemap.xml、robots.txt、LocalBusiness 結構化資料）、配送方案 FAQ 區塊、Footer 社群連結（Line/FB/Threads/IG）、首頁信任元素區塊（7 個項目）
