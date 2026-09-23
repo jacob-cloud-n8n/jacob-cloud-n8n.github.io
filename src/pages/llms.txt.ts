@@ -14,8 +14,7 @@ export const GET: APIRoute = ({ site }) => {
 - [商品廚窗](${baseUrl}/products/) - 鮮乳系列、特調飲品與手作甜點（羊奶饅頭、布丁、雪糕）
 - [配送方案](${baseUrl}/delivery/) - 週配訂閱細節、配送時間、配送地區與訂購需知
 - [最新消息](${baseUrl}/news/) - 牧場動態、門市公告與最新活動文章
-- [大事記](${baseUrl}/milestones/) - 小牧人發展歷程與品牌歷史大事記
-- [品牌故事](${baseUrl}/brand-story/) - 傳承父親酪農夢想與牧場初心的故事
+- [大事記](${baseUrl}/milestones/) - 小牧人發展歷程與品牌歷史大事記，含品牌故事（品牌故事頁已永久轉址至此）
 - [加入 Line](${baseUrl}/line/) - 快速加入官方 LINE 帳號進行訂單確認與配送諮詢
 `;
 

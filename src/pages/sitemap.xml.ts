@@ -12,7 +12,6 @@ export const GET: APIRoute = async ({ site }) => {
     "/news/",
     "/milestones/",
     "/line/",
-    "/brand-story/",
   ];
 
   let newsSlugs: string[] = [];
