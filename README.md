@@ -44,7 +44,7 @@ pnpm run dev
 
 首頁「導航到小牧人羊奶」會使用 `PUBLIC_NAVIGATION_NAME` 與 `PUBLIC_NAVIGATION_ADDRESS` 組成 Google 地圖搜尋連結。市集活動時只要更新地址即可切換導航目的地。
 
-Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料，不會把 Notion 原始 JSON 傳到前端。Cloudflare Pages 版會在建置時讀取 Notion，因此 Notion 內容變更後必須重新觸發一次 Pages 建置才會更新；舊 Zeabur SSR 模式則仍可使用 `NOTION_CACHE_SECONDS` 做短快取。
+Notion 沒有設定時會使用 `src/lib/content.ts` 的乾淨 fallback 資料，不會把 Notion 原始 JSON 傳到前端。Cloudflare Pages 版會在建置時讀取 Notion，將 Notion 託管圖片下載到 `/_notion/` 並以內容雜湊命名；圖片下載失敗會中止建置並指出資料庫、頁面與欄位。外部圖片網址不會被改寫。Notion 內容變更後必須重新觸發一次 Pages 建置才會更新；舊 Zeabur SSR 模式則仍可使用 `NOTION_CACHE_SECONDS` 做短快取。
 
 首頁、最新消息列表、大事記、配送方案與加入 Line 頁面的區塊文案可由各自的頁面維護資料庫管理。每列的 `名稱` 或 `品牌說明` 欄位使用前台 key，例如 `home.hero.title`、`news.hero.description`、`line.benefits.1.title`；`前台位置` 說明該資料對應到網站哪個圖文位置。
 
@@ -78,6 +78,7 @@ Cloudflare Pages 的環境變數名稱如下。`NOTION_TOKEN` 必須設為加密
 ```bash
 pnpm run build:cloudflare
 pnpm run preview:cloudflare
+pnpm run verify:notion-images
 ```
 
 `public/_routes.json` 只讓 `/api/*` 進入 Functions；其他路徑直接使用 `dist` 靜態檔。`public/_redirects` 保留下列舊連結：

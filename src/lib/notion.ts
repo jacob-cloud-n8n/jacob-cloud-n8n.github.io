@@ -10,6 +10,7 @@ import {
   type PageCopy,
   type Product
 } from "./content";
+import { localizeNotionFiles, rethrowNotionImageBuildError } from "./notion-images";
 
 const notionVersion = "2022-06-28";
 const defaultProductDatabaseId = "35089dd14f0a804480fad43c37044ef4";
@@ -29,6 +30,8 @@ type CacheEntry<T> = {
 const databaseCache = new Map<string, CacheEntry<any>>();
 
 type NotionPage = {
+  id?: string;
+  url?: string;
   properties?: Record<string, any>;
 };
 
@@ -215,7 +218,8 @@ async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, i
   let startCursor: string | undefined;
 
   do {
-    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+    const notionApiBaseUrl = process.env.NOTION_API_BASE_URL || "https://api.notion.com/v1";
+    const response = await fetch(`${notionApiBaseUrl}/databases/${databaseId}/query`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -233,6 +237,8 @@ async function queryDatabase<T>(databaseId: string, mapper: (page: NotionPage, i
     pages.push(...(payload.results ?? []));
     startCursor = payload.has_more ? payload.next_cursor : undefined;
   } while (startCursor);
+
+  await localizeNotionFiles(pages, databaseId);
 
   const ttl = cacheSeconds();
   if (ttl > 0) {
@@ -262,6 +268,7 @@ export async function getProducts(): Promise<Product[]> {
     const activeProducts = namedProducts.filter((product) => product.isActive);
     return activeProducts.length > 0 ? activeProducts : namedProducts.length > 0 ? namedProducts : fallbackProducts;
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return fallbackProducts;
   }
@@ -283,6 +290,7 @@ export async function getBrandContent(fallback: BrandEntry[] = fallbackBrandEntr
     const cleanEntries = entries.filter((entry) => entry.title).sort((a, b) => a.order - b.order);
     return cleanEntries.length > 0 ? cleanEntries : fallback;
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return fallback;
   }
@@ -316,6 +324,7 @@ export async function getMilestones(): Promise<BrandEntry[]> {
     milestones.sort((a, b) => a.order - b.order);
     return milestones.length > 1 ? milestones : milestoneEntries;
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return milestoneEntries;
   }
@@ -370,6 +379,7 @@ export async function getNews(): Promise<NewsItem[]> {
       highlightContent: "更多活動與供應狀態，請以官方 Line 回覆為準。"
     }));
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return fallbackNews;
   }
@@ -395,6 +405,7 @@ export async function getDeliveryMethods(): Promise<DeliveryMethod[]> {
       .map(({ isActive, ...method }) => method);
     return activeMethods.length > 0 ? activeMethods : deliveryMethods;
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return deliveryMethods;
   }
@@ -438,12 +449,14 @@ export async function getPageCopy(): Promise<PageCopy> {
       try {
         copy = mergePageCopy(copy, await getCopyFromDatabase(source.id, source.titles));
       } catch (error) {
+        rethrowNotionImageBuildError(error);
         console.warn(error);
       }
     }
 
     return copy;
   } catch (error) {
+    rethrowNotionImageBuildError(error);
     console.warn(error);
     return {};
   }
