@@ -1,6 +1,12 @@
 import { defineMiddleware } from "astro:middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // Cloudflare Pages serves the static build and handles path redirects through
+  // public/_redirects. Keep the old-host redirect only for the legacy SSR build.
+  if (import.meta.env.ASTRO_OUTPUT === "static") {
+    return next();
+  }
+
   const url = new URL(context.request.url);
   const host = context.request.headers.get("host") || url.host;
 

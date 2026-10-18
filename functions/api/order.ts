@@ -1,4 +1,24 @@
-import type { APIRoute } from "astro";
+interface Env {
+  NOTION_TOKEN?: string;
+  NOTION_ORDER_DB_ID?: string;
+}
+
+type PagesContext = {
+  request: Request;
+  env: Env;
+};
+
+type Order = {
+  name: string;
+  phone: string;
+  lineId: string;
+  deliveryType: string;
+  deliveryPlace: string;
+  plan: string;
+  frequency: string;
+  note: string;
+  submittedAt: string;
+};
 
 const planLabels: Record<string, string> = {
   "3month": "一次訂購三個月，享9折價",
@@ -7,7 +27,6 @@ const planLabels: Record<string, string> = {
 };
 
 const notionVersion = "2022-06-28";
-const defaultOrderDatabaseId = "34389dd14f0a80bfb525d029d67afa19";
 
 function clean(value: unknown): string {
   return String(value ?? "").trim();
@@ -15,6 +34,13 @@ function clean(value: unknown): string {
 
 function validPhone(value: string): boolean {
   return /^[0-9+\-\s()]{8,20}$/.test(value);
+}
+
+function jsonResponse(body: object, status = 200): Response {
+  return Response.json(body, {
+    status,
+    headers: { "Content-Type": "application/json; charset=utf-8" }
+  });
 }
 
 function lineFallbackUrl(order: Order): string {
@@ -33,21 +59,9 @@ function lineFallbackUrl(order: Order): string {
   return `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
 }
 
-type Order = {
-  name: string;
-  phone: string;
-  lineId: string;
-  deliveryType: string;
-  deliveryPlace: string;
-  plan: string;
-  frequency: string;
-  note: string;
-  submittedAt: string;
-};
-
-async function createNotionOrder(order: Order): Promise<boolean> {
-  const token = import.meta.env.NOTION_TOKEN;
-  const databaseId = import.meta.env.NOTION_ORDER_DB_ID || defaultOrderDatabaseId;
+async function createNotionOrder(env: Env, order: Order): Promise<boolean> {
+  const token = clean(env.NOTION_TOKEN);
+  const databaseId = clean(env.NOTION_ORDER_DB_ID);
   if (!token || !databaseId) return false;
 
   const note = [
@@ -96,11 +110,11 @@ async function createNotionOrder(order: Order): Promise<boolean> {
   return true;
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const onRequestPost = async ({ request, env }: PagesContext): Promise<Response> => {
   let fallbackOrder: Order | null = null;
 
   try {
-    const body = await request.json();
+    const body = await request.json() as Record<string, unknown>;
     const order = {
       name: clean(body.name),
       phone: clean(body.phone),
@@ -115,46 +129,35 @@ export const POST: APIRoute = async ({ request }) => {
     fallbackOrder = order;
 
     if (!order.name || !order.phone || !order.deliveryPlace) {
-      return new Response(JSON.stringify({ ok: false, message: "請填寫姓名、電話與配送地點或門市。" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
-      });
+      return jsonResponse({ ok: false, message: "請填寫姓名、電話與配送地點或門市。" }, 400);
     }
 
     if (!validPhone(order.phone)) {
-      return new Response(JSON.stringify({ ok: false, message: "請確認電話格式。" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" }
-      });
+      return jsonResponse({ ok: false, message: "請確認電話格式。" }, 400);
     }
 
-    if (await createNotionOrder(order)) {
-      return new Response(JSON.stringify({ ok: true, mode: "notion" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
-      });
+    if (await createNotionOrder(env, order)) {
+      return jsonResponse({ ok: true, mode: "notion" });
     }
 
-    return new Response(JSON.stringify({
+    return jsonResponse({
       ok: true,
       mode: "line-fallback",
       lineUrl: lineFallbackUrl(order)
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
     });
   } catch (error) {
     console.error(error);
     if (fallbackOrder) {
-      return new Response(JSON.stringify({ ok: true, mode: "line-fallback", lineUrl: lineFallbackUrl(fallbackOrder) }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" }
+      return jsonResponse({
+        ok: true,
+        mode: "line-fallback",
+        lineUrl: lineFallbackUrl(fallbackOrder)
       });
     }
 
-    return new Response(JSON.stringify({ ok: false, message: "訂單送出失敗，請稍後再試或改用官方 Line 聯繫。" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+    return jsonResponse({
+      ok: false,
+      message: "訂單送出失敗，請稍後再試或改用官方 Line 聯繫。"
+    }, 500);
   }
 };
