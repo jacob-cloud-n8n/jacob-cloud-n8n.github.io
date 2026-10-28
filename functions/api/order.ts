@@ -28,6 +28,8 @@ const planLabels: Record<string, string> = {
 
 const notionVersion = "2022-06-28";
 
+const unavailableMessage = "訂單系統暫時無法使用，請改用電話 0918-620092 或官方 LINE（https://lin.ee/xFMuRx5）訂購。";
+
 function clean(value: unknown): string {
   return String(value ?? "").trim();
 }
@@ -41,22 +43,6 @@ function jsonResponse(body: object, status = 200): Response {
     status,
     headers: { "Content-Type": "application/json; charset=utf-8" }
   });
-}
-
-function lineFallbackUrl(order: Order): string {
-  const message = [
-    "小牧人羊奶訂單",
-    `姓名：${order.name}`,
-    `電話：${order.phone}`,
-    order.lineId ? `Line ID：${order.lineId}` : "",
-    `配送方式：${order.deliveryType}`,
-    `配送地點/門市：${order.deliveryPlace}`,
-    `方案：${order.plan}`,
-    `配送頻率：${order.frequency}`,
-    order.note ? `備註：${order.note}` : ""
-  ].filter(Boolean).join("\n");
-
-  return `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
 }
 
 async function createNotionOrder(env: Env, order: Order): Promise<boolean> {
@@ -111,8 +97,6 @@ async function createNotionOrder(env: Env, order: Order): Promise<boolean> {
 }
 
 export const onRequestPost = async ({ request, env }: PagesContext): Promise<Response> => {
-  let fallbackOrder: Order | null = null;
-
   try {
     const body = await request.json() as Record<string, unknown>;
     const order = {
@@ -126,7 +110,6 @@ export const onRequestPost = async ({ request, env }: PagesContext): Promise<Res
       note: clean(body.note),
       submittedAt: new Date().toISOString()
     };
-    fallbackOrder = order;
 
     if (!order.name || !order.phone || !order.deliveryPlace) {
       return jsonResponse({ ok: false, message: "請填寫姓名、電話與配送地點或門市。" }, 400);
@@ -140,24 +123,13 @@ export const onRequestPost = async ({ request, env }: PagesContext): Promise<Res
       return jsonResponse({ ok: true, mode: "notion" });
     }
 
-    return jsonResponse({
-      ok: true,
-      mode: "line-fallback",
-      lineUrl: lineFallbackUrl(order)
-    });
+    return jsonResponse({ ok: false, message: unavailableMessage }, 503);
   } catch (error) {
-    console.error(error);
-    if (fallbackOrder) {
-      return jsonResponse({
-        ok: true,
-        mode: "line-fallback",
-        lineUrl: lineFallbackUrl(fallbackOrder)
-      });
-    }
-
-    return jsonResponse({
-      ok: false,
-      message: "訂單送出失敗，請稍後再試或改用官方 Line 聯繫。"
-    }, 500);
+    const status = error && typeof error === "object" && "status" in error
+      ? (error as { status?: unknown }).status
+      : undefined;
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Order submission failed", { status, message });
+    return jsonResponse({ ok: false, message: unavailableMessage }, 503);
   }
 };

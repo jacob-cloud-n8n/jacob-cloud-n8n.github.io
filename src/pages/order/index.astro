@@ -105,19 +105,33 @@ const planLabelsJson = JSON.stringify(planLabels);
     selectedFrequency.textContent = currentFrequency;
   }
 
-  function lineFallbackUrl(payload) {
-    const message = [
-      "小牧人羊奶訂單",
-      `姓名：${payload.name || ""}`,
-      `電話：${payload.phone || ""}`,
-      payload.lineId ? `Line ID：${payload.lineId}` : "",
-      `配送方式：${payload.deliveryType || ""}`,
-      `配送地點/門市：${payload.deliveryPlace || ""}`,
-      `方案：${document.querySelector("[data-selected-plan]")?.textContent?.trim() || ""}`,
-      `配送頻率：${payload.frequency || ""}`,
-      payload.note ? `備註：${payload.note}` : ""
-    ].filter(Boolean).join("\n");
-    return `https://line.me/R/msg/text/?${encodeURIComponent(message)}`;
+  const failureMessage = "訂單系統暫時無法使用，請改用電話 0918-620092 或官方 LINE（https://lin.ee/xFMuRx5）訂購。";
+
+  function renderStatus(message) {
+    const text = String(message || failureMessage);
+    const pattern = /(0918-?620-?092|https:\/\/lin\.ee\/xFMuRx5)/g;
+    status.textContent = "";
+    let lastIndex = 0;
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        status.append(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+      const link = document.createElement("a");
+      if (match[0].startsWith("http")) {
+        link.href = match[0];
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+      } else {
+        link.href = "tel:0918620092";
+      }
+      link.textContent = match[0];
+      status.append(link);
+      lastIndex = pattern.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      status.append(document.createTextNode(text.slice(lastIndex)));
+    }
   }
 
   form?.addEventListener("submit", async (event) => {
@@ -140,24 +154,14 @@ const planLabelsJson = JSON.stringify(planLabels);
         : { ok: false };
 
       if (!response.ok || !result.ok) {
-        if (response.status === 404 || response.status === 405) {
-          window.open(lineFallbackUrl(payload), "_blank", "noopener,noreferrer");
-          status.textContent = "預覽版已建立 Line 訊息，請在 Line 中按下送出。";
-          return;
-        }
-        throw new Error(result.message || "訂單送出失敗。");
+        renderStatus(result.message);
+        return;
       }
 
-      if (result.lineUrl) {
-        window.open(result.lineUrl, "_blank", "noopener,noreferrer");
-        status.textContent = "已建立 Line 訊息，請在 Line 中按下送出。";
-      } else {
-        status.textContent = "訂單已送出，我們會透過官方 Line 與您確認。";
-        form.reset();
-      }
+      status.textContent = "訂單已送出，我們會透過官方 Line 與您確認。";
+      form.reset();
     } catch (error) {
-      window.open(lineFallbackUrl(payload), "_blank", "noopener,noreferrer");
-      status.textContent = "已建立 Line 訊息，請在 Line 中按下送出。";
+      renderStatus(failureMessage);
     } finally {
       submitButton.disabled = false;
     }
