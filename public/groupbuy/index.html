@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小牧人羊奶｜校園團購訂購單</title>
+<meta name="description" content="小牧人羊奶校園團購：純羊奶 1000cc、羊奶饅頭、羊奶布丁，每週固定送到學校，取貨時付款。">
+<meta property="og:title" content="小牧人羊奶｜校園團購訂購單">
+<meta property="og:description" content="想喝隨時填，每週固定送到學校，取貨時付款。">
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=LXGW+WenKai+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+/* 色票、字型、手繪框沿用《小牧人羊奶簡介 2026-10-22》試喝 DM */
+:root{
+  --paper:#fbf5e6; --ink:#3a2f28; --ink-soft:#6b5a4c;
+  --mustard:#f2b632; --mustard-soft:#fbe3a1;
+  --grass:#5f9145; --grass-soft:#dcebc9; --sky:#d6eaea; --clay:#d4693f; --white:#fffdf7;
+  --wobble:255px 14px 225px 14px/14px 225px 14px 255px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Noto Sans TC",sans-serif;color:var(--ink);font-size:17px;line-height:1.6;
+  background-color:var(--paper);
+  background-image:radial-gradient(circle,rgba(58,47,40,.09) 1px,transparent 1.6px);background-size:22px 22px}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 48px}
+svg{display:block}
+.ink-stroke{fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.topbar{display:flex;align-items:center;gap:10px}
+.topbar img{width:52px;height:52px;mix-blend-mode:multiply}
+.topbar .brand{font-family:"Huninn";font-size:21px;line-height:1.15}
+.topbar .brand small{display:block;font-family:"Fraunces";font-style:italic;font-size:14px;color:var(--ink-soft)}
+
+.hero{margin-top:14px;border:2.5px solid var(--ink);border-radius:var(--wobble);background:var(--sky);position:relative;overflow:hidden;padding:20px 20px 92px}
+.hero .kicker{font-family:"LXGW WenKai TC";font-weight:700;font-size:16px;color:var(--grass)}
+.hero h1{font-family:"Huninn";font-weight:400;font-size:34px;line-height:1.2;margin-top:4px}
+.hero p{margin-top:8px;font-size:16px}
+.hero .hills{position:absolute;left:0;right:0;bottom:0;width:100%;height:80px}
+
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.fact{background:var(--white);border:2px solid var(--ink);border-radius:var(--wobble);padding:10px 6px;text-align:center}
+.fact b{display:block;font-family:"Huninn";font-weight:400;font-size:17px;line-height:1.25}
+.fact span{font-size:13px;color:var(--ink-soft)}
+
+h2{font-family:"Huninn";font-weight:400;font-size:24px;line-height:1.2;display:inline-block;position:relative;padding:0 4px;z-index:0;margin:28px 0 12px}
+h2::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:10px;background:var(--mustard);opacity:.75;z-index:-1;border-radius:6px 2px 8px 2px}
+
+.item{background:var(--white);border:2px solid var(--ink);border-radius:var(--wobble);padding:12px;display:grid;grid-template-columns:84px 1fr;gap:12px;margin-bottom:12px}
+.item .ph{width:84px;height:84px;border:1.5px solid var(--ink);border-radius:8px;overflow:hidden}
+.item .ph img{width:100%;height:100%;object-fit:cover}
+.item h3{font-family:"Huninn";font-weight:400;font-size:20px;line-height:1.2}
+.item h3 .price{font-family:"Fraunces";font-weight:600;font-size:18px;color:var(--clay);margin-left:6px}
+.item p{font-size:14px;color:var(--ink-soft);line-height:1.45;margin-top:2px}
+.qty-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.qty-row label{font-size:15px}
+.qty-row label .price{font-family:"Fraunces";font-weight:600;color:var(--clay);font-size:15px;margin-left:4px}
+.stepper{display:flex;align-items:center;border:2px solid var(--ink);border-radius:22px;background:var(--paper);flex:none}
+.stepper button{width:40px;height:40px;border:0;background:none;font-size:22px;line-height:1;color:var(--ink);cursor:pointer;font-family:"Huninn"}
+.stepper button:focus-visible{outline:3px solid var(--mustard);border-radius:50%}
+.stepper input{width:36px;text-align:center;border:0;background:none;font-family:"Fraunces";font-weight:600;font-size:18px;color:var(--ink);-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+.flavors{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.flavors span{font-size:13px;border:1.5px solid var(--ink);border-radius:12px;padding:0 8px;line-height:1.6}
+.f1{background:#fff8e8}.f2{background:#f8d27a}.f3{background:#d9b08a}.f4{background:#eaa08a}.f5{background:#e8e0c8}
+.item.colo{background:var(--mustard-soft);cursor:pointer}
+.ph.seal{display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Huninn";font-size:18px;line-height:1.2;color:var(--clay);border:2px solid var(--clay)!important;border-radius:50%!important;background:var(--white);transform:rotate(-8deg)}
+.price.ask{font-family:"Huninn";font-weight:400}
+.check{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:16px}
+.check input,.opt input{width:24px;height:24px;accent-color:var(--grass);flex:none}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--white);border:2px solid var(--ink);border-radius:var(--wobble);padding:12px 14px;margin-bottom:10px;cursor:pointer;font-size:17px;line-height:1.45}
+.opt input{margin-top:2px}
+.opt small{display:block;font-size:13px;color:var(--ink-soft)}
+.total .sum s{font-family:"Fraunces";font-size:16px;color:var(--ink-soft);margin-left:6px}
+.field{margin-bottom:14px}
+.field label{display:block;font-family:"Huninn";font-size:17px;margin-bottom:4px}
+.field label small{font-family:"Noto Sans TC";font-size:13px;color:var(--ink-soft);margin-left:4px}
+.field input,.field textarea{width:100%;font:inherit;font-size:17px;color:var(--ink);background:var(--white);border:2px solid var(--ink);border-radius:10px;padding:10px 12px}
+.field input:focus,.field textarea:focus{outline:3px solid var(--mustard);outline-offset:1px}
+.field .err{display:none;color:var(--clay);font-size:14px;margin-top:4px}
+.field.invalid .err{display:block}
+.field.invalid input{border-color:var(--clay)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.total{position:sticky;bottom:10px;margin-top:20px;background:var(--mustard);border:2.5px solid var(--ink);border-radius:var(--wobble);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:5}
+.total .sum{font-family:"Huninn";font-size:18px;line-height:1.25}
+.total .sum b{font-family:"Fraunces";font-weight:600;font-size:26px}
+.total .sum small{display:block;font-family:"Noto Sans TC";font-size:13px}
+.total button{font-family:"Huninn";font-size:19px;background:var(--ink);color:var(--paper);border:0;border-radius:24px;padding:10px 20px;cursor:pointer;flex:none}
+.total button:disabled{opacity:.5;cursor:default}
+.note{margin-top:14px;background:var(--mustard-soft);border:2px dashed var(--ink);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.55}
+.msg{display:none;margin-top:14px;border:2px solid var(--ink);border-radius:var(--wobble);padding:16px;background:var(--white)}
+.msg.show{display:block}
+.msg h3{font-family:"Huninn";font-weight:400;font-size:22px}
+.msg.err h3{color:var(--clay)}
+.msg a{color:var(--grass);font-weight:700}
+.foot{margin-top:28px;font-size:13px;color:var(--ink-soft);text-align:center;line-height:1.7}
+.foot a{color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="topbar">
+    <img src="assets/logo.png" alt="小牧人羊奶 logo">
+    <div class="brand">小牧人羊奶<small>Little Shepherd Goat Milk</small></div>
+  </div>
+
+  <section class="hero">
+    <div class="kicker">校園團購・想喝隨時填</div>
+    <h1>每週團購訂購單</h1>
+    <p>填好送出就完成登記，我們每週統一彙整、固定送到學校，<b>取貨時再付款</b>。</p>
+    <svg class="hills" viewBox="0 0 800 180" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 95 C120 40 230 55 330 92 C430 128 520 60 640 58 C720 57 770 80 800 90 L800 180 L0 180Z" fill="#a9cd8a" stroke="#3a2f28" stroke-width="3"/>
+      <path d="M0 132 C140 100 260 120 380 140 C500 160 620 112 800 120 L800 180 L0 180Z" fill="#5f9145" stroke="#3a2f28" stroke-width="3"/>
+      <g stroke="#3a2f28" stroke-width="2.5" stroke-linejoin="round"><path d="M600 98 l22 -18 l22 18 v22 h-44z" fill="#d4693f"/><rect x="614" y="104" width="16" height="16" fill="#fffdf7"/></g>
+    </svg>
+  </section>
+
+  <div class="facts">
+    <div class="fact"><b>不加一滴水</b><span>原汁原味</span></div>
+    <div class="fact"><b>凌晨殺菌</b><span>當天直送</span></div>
+    <div class="fact"><b>取貨付款</b><span>不用先轉帳</span></div>
+  </div>
+
+  <form id="f" novalidate>
+    <h2>選品項</h2>
+
+    <div class="item">
+      <div class="ph"><img src="assets/milk-1000.jpg" alt="純羊奶 1000cc"></div>
+      <div>
+        <h3>純羊奶 1000cc<span class="price">$225</span></h3>
+        <p>每天凌晨殺菌，不加一滴水。冷藏約 5–7 天，收到盡快喝。</p>
+        <div class="qty-row"><label for="q_milk">數量（瓶）</label>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="減少">−</button><input id="q_milk" name="milk1000" type="number" inputmode="numeric" min="0" max="50" value="0" data-price="225" data-name="純羊奶 1000cc"><button type="button" data-d="1" aria-label="增加">＋</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="ph"><img src="assets/mantou.jpg" alt="羊奶饅頭"></div>
+      <div>
+        <h3>羊奶饅頭綜合包<span class="price">$400</span></h3>
+        <p>10 顆，5 種口味各 2 顆。用羊奶代水、老麵團發酵。</p>
+        <div class="flavors"><span class="f1">原味</span><span class="f2">南瓜</span><span class="f3">黑糖</span><span class="f4">紅麴</span><span class="f5">藜麥</span></div>
+        <div class="qty-row"><label for="q_mix">數量（包）</label>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="減少">−</button><input id="q_mix" name="mantouMix10" type="number" inputmode="numeric" min="0" max="50" value="0" data-price="400" data-name="羊奶饅頭綜合包10顆"><button type="button" data-d="1" aria-label="增加">＋</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="ph"><img src="assets/pudding.jpg" alt="羊奶布丁"></div>
+      <div>
+        <h3>羊奶布丁<span class="price">$65</span></h3>
+        <p>新鮮雞蛋、手工焦糖，羊奶帶來綿密口感。</p>
+        <div class="qty-row"><label for="q_pud">數量（個）</label>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="減少">−</button><input id="q_pud" name="pudding" type="number" inputmode="numeric" min="0" max="50" value="0" data-price="65" data-name="羊奶布丁"><button type="button" data-d="1" aria-label="增加">＋</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="ph"><img src="assets/popsicle.jpg" alt="羊奶雪糕"></div>
+      <div>
+        <h3>羊奶雪糕<span class="price">$50</span></h3>
+        <p>羊奶做的冰品。</p>
+        <div class="qty-row"><label for="q_pop">數量（支）</label>
+          <div class="stepper"><button type="button" data-d="-1" aria-label="減少">−</button><input id="q_pop" name="popsicle" type="number" inputmode="numeric" min="0" max="50" value="0" data-price="50" data-name="羊奶雪糕"><button type="button" data-d="1" aria-label="增加">＋</button></div>
+        </div>
+      </div>
+    </div>
+
+    <label class="item colo" for="colostrum">
+      <div class="ph seal">季節<br>限定</div>
+      <div>
+        <h3>初乳羊奶<span class="price ask">時價</span></h3>
+        <p>生小羊時才有，濃純、帶太妃糖般的香氣。有貨時我們會先通知你。</p>
+        <div class="check"><input type="checkbox" id="colostrum" name="colostrumNotify"><span>初乳有貨時通知我</span></div>
+      </div>
+    </label>
+
+    <h2>優惠與收據</h2>
+    <label class="opt" for="chaoyang"><input type="checkbox" id="chaoyang" name="chaoyang"><span><b>我是朝陽師生</b>，享 9 折<small>整筆合計打 9 折，尾數無條件捨去</small></span></label>
+    <label class="opt" for="receipt"><input type="checkbox" id="receipt" name="receipt"><span><b>需要收據</b><small>開立免用統一發票收據，抬頭可寫在備註</small></span></label>
+
+    <h2>聯絡資料</h2>
+    <div class="field" id="fd_name"><label for="name">姓名</label><input id="name" name="name" autocomplete="name" maxlength="30" required><div class="err">請填姓名，取貨時核對用</div></div>
+    <div class="field" id="fd_phone"><label for="phone">手機</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="09xx-xxx-xxx" required><div class="err">請填正確的手機號碼，到貨時通知你</div></div>
+    <div class="field" id="fd_unit"><label for="unit">單位／辦公室<small>取貨用</small></label><input id="unit" name="unit" maxlength="40" placeholder="例如：祕書室" required><div class="err">請填單位，方便分貨</div></div>
+    <div class="field"><label for="lineName">LINE 名稱<small>選填</small></label><input id="lineName" name="lineName" maxlength="40"></div>
+    <div class="field"><label for="note">備註<small>選填</small></label><textarea id="note" name="note" rows="3" maxlength="300" placeholder="例如：希望哪一週拿、要分兩次取"></textarea></div>
+    <div class="hp" aria-hidden="true"><label for="website">請勿填寫</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+
+    <div class="note">配送日與每週收單時間會在群組公告。初乳是時價，有貨時另外通知、確認價格後才算數。送出後我們會依登記內容備貨，若需更改或取消，請在收單前於群組或 LINE 告訴我們。填寫的資料只用於這次訂購的聯絡與配送。</div>
+
+    <div class="total" aria-live="polite">
+      <div class="sum">合計 <b id="sum">$0</b><s id="orig"></s><small id="count">還沒選品項</small></div>
+      <button type="submit" id="send" disabled>送出訂單</button>
+    </div>
+    <div class="msg" id="msg" role="status"></div>
+  </form>
+
+  <p class="foot">小牧人羊奶・台中市霧峰區光復新村 新生路 126 號<br>訂購專線 0918-620092・<a href="https://milk.little-shepherd.com/">milk.little-shepherd.com</a></p>
+</main>
+
+<script>
+// 送出端點：n8n webhook（上線前由部署設定填入）
+const ENDPOINT = "https://n8n.little-shepherd.com/webhook/shepherd-groupbuy-order";
+const LINE_URL = "https://lin.ee/xFMuRx5";
+const f = document.getElementById("f");
+const qtys = [...f.querySelectorAll("input[type=number]")];
+const sendBtn = document.getElementById("send");
+const msg = document.getElementById("msg");
+
+function clampQty(el){ let v = parseInt(el.value, 10); if (isNaN(v) || v < 0) v = 0; if (v > 50) v = 50; el.value = v; return v; }
+function recalc(){
+  let subtotal = 0, n = 0;
+  qtys.forEach(el => { const q = clampQty(el); subtotal += q * Number(el.dataset.price); n += q; });
+  const cy = document.getElementById("chaoyang").checked;
+  const colo = document.getElementById("colostrum").checked;
+  const total = cy ? Math.floor(subtotal * 0.9) : subtotal;
+  document.getElementById("sum").textContent = "$" + total.toLocaleString("en-US");
+  document.getElementById("orig").textContent = cy && subtotal ? "$" + subtotal.toLocaleString("en-US") : "";
+  document.getElementById("count").textContent = n ? `共 ${n} 件${cy ? "・朝陽 9 折" : ""}・取貨時付款` : (colo ? "只登記初乳通知" : "還沒選品項");
+  sendBtn.disabled = n === 0 && !colo;
+  return { subtotal, total, n, cy, colo };
+}
+f.addEventListener("click", e => {
+  const b = e.target.closest(".stepper button"); if (!b) return;
+  const input = b.parentElement.querySelector("input");
+  input.value = clampQty(input) + Number(b.dataset.d); recalc();
+});
+qtys.forEach(el => el.addEventListener("input", recalc));
+["chaoyang", "colostrum", "receipt"].forEach(id => document.getElementById(id).addEventListener("change", recalc));
+
+function check(id, ok){ document.getElementById(id).classList.toggle("invalid", !ok); return ok; }
+function show(kind, html){ msg.className = "msg show " + kind; msg.innerHTML = html; msg.scrollIntoView({ behavior: "smooth", block: "center" }); }
+
+f.addEventListener("submit", async e => {
+  e.preventDefault();
+  const { subtotal, total, n, cy, colo } = recalc();
+  const val = id => document.getElementById(id).value;
+  const name = val("name").trim(), phone = val("phone").replace(/[\s-]/g, ""), unit = val("unit").trim();
+  const ok = [check("fd_name", name.length > 0), check("fd_phone", /^09\d{8}$/.test(phone)), check("fd_unit", unit.length > 0)].every(Boolean);
+  if (!ok || (!n && !colo)) { const first = f.querySelector(".invalid input"); if (first) first.focus(); return; }
+
+  const items = qtys.filter(el => Number(el.value) > 0).map(el => ({ key: el.name, name: el.dataset.name, qty: Number(el.value), price: Number(el.dataset.price) }));
+  const receipt = document.getElementById("receipt").checked;
+  const payload = { name, phone, unit, lineName: val("lineName").trim(), note: val("note").trim(), website: val("website"), items, chaoyang: cy, receipt, colostrumNotify: colo, subtotal, total, source: "school-groupbuy" };
+
+  sendBtn.disabled = true; sendBtn.textContent = "送出中…";
+  try {
+    const res = await fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.message || "送出失敗");
+    const lines = items.map(i => `${i.name} × ${i.qty}`);
+    if (colo) lines.push("初乳有貨時通知");
+    const amt = data.total ?? total;
+    show("ok", `<h3>登記完成，謝謝你！</h3><p>訂單編號 <b>${data.orderId || "—"}</b></p><p style="margin-top:6px">${lines.join("<br>")}<br>合計 <b>$${Number(amt).toLocaleString("en-US")}</b>${cy ? "（朝陽 9 折）" : ""}，取貨時付款${receipt ? "，會附收據" : ""}</p><p style="margin-top:6px">配送日會在群組公告，到貨時再通知你。</p>`);
+    qtys.forEach(el => el.value = 0); document.getElementById("colostrum").checked = false;
+    recalc();
+  } catch (err) {
+    show("err", `<h3>這次沒有送出成功</h3><p>${err.message === "送出失敗" ? "網路或系統暫時有狀況。" : err.message}請稍後再試，或直接 <a href="${LINE_URL}" target="_blank" rel="noopener">用 LINE 傳訊給我們</a>，告訴我們品項與數量。</p>`);
+  } finally {
+    sendBtn.textContent = "送出訂單"; sendBtn.disabled = recalc().n === 0;
+  }
+});
+recalc();
+</script>
+</body>
+</html>
