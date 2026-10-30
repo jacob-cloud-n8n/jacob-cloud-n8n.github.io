@@ -1,0 +1,181 @@
+---
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>找不到這個頁面｜小牧人羊奶</title>
+    <meta name="description" content="找不到這個頁面" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/images/logo.webp" />
+  </head>
+  <body>
+    <Header currentPath="/404/" />
+    <main>
+      <section class="not-found">
+        <div class="container not-found-inner">
+          <span class="code">404</span>
+          <h1>找不到這個頁面</h1>
+          <a class="button" href="/">回首頁</a>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --color-primary: #f3b21b;
+    --color-primary-strong: #7c5800;
+    --color-background: #fdfbf7;
+    --color-surface: #f5f2ea;
+    --color-surface-bright: #fff8f3;
+    --color-text: #3e362e;
+    --color-muted: #8da399;
+    --color-accent: #d9734e;
+    --shadow-soft: 0 12px 30px rgba(62, 54, 46, 0.1);
+    --shadow-lift: 0 18px 45px rgba(62, 54, 46, 0.14);
+    --radius-organic: 8px 18px 12px 14px;
+    color-scheme: light;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(243, 178, 27, 0.16), transparent 28rem),
+      radial-gradient(circle at 88% 24%, rgba(141, 163, 153, 0.22), transparent 30rem),
+      var(--color-background);
+    color: var(--color-text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.26;
+    background-image:
+      linear-gradient(rgba(62, 54, 46, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(62, 54, 46, 0.02) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+  }
+
+  main {
+    overflow: hidden;
+  }
+
+  .container {
+    width: min(1120px, calc(100% - 32px));
+    margin-inline: auto;
+  }
+
+  .button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 0;
+    border-radius: var(--radius-organic);
+    padding: 12px 20px;
+    background: var(--color-primary);
+    color: var(--color-text);
+    box-shadow: 0 9px 18px rgba(243, 178, 27, 0.26);
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+    will-change: transform;
+  }
+
+  .button:hover,
+  .button:focus-visible {
+    transform: scale(1.055);
+    box-shadow: 0 14px 28px rgba(243, 178, 27, 0.34);
+  }
+
+  .button:active {
+    transform: scale(0.97);
+  }
+
+  .icon {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  @media (max-width: 760px) {
+    .container {
+      width: min(100% - 24px, 1120px);
+    }
+
+    body {
+      padding-bottom: 76px;
+    }
+  }
+</style>
+
+<style>
+  .not-found {
+    display: grid;
+    min-height: 620px;
+    margin-top: -82px;
+    padding: 144px 0 96px;
+    place-items: center;
+    text-align: center;
+  }
+
+  .not-found-inner {
+    display: grid;
+    justify-items: center;
+  }
+
+  .code {
+    color: var(--color-primary-strong);
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.18em;
+  }
+
+  h1 {
+    margin: 10px 0 28px;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    line-height: 1.1;
+  }
+</style>
