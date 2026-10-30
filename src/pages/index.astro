@@ -23,6 +23,7 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
     image: copyImage(pageCopy, `${key}.image`, matchedProduct.image)
   };
 });
+const heroPosterFallback = copyImage(pageCopy, "home.hero.image", "/images/goat-field.webp");
 ---
 
 <MainLayout
@@ -42,8 +43,52 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
             <a class="button secondary" href="/line/">加入官方 line</a>
           </div>
         </div>
-        <div class="hero-card">
-          <img class="cms-image-cover" src={copyImage(pageCopy, "home.hero.image", "/images/goat-field.webp")} alt="陽光牧場中的小羊" width="720" height="720" />
+        <div class="hero-card" data-hero-video-card data-user-started="false">
+          <div class="hero-media-frame">
+            <video
+              id="hero-promo-video"
+              class="hero-video"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster="/videos/goatmilk-promo-poster.webp"
+              data-poster-fallback={heroPosterFallback}
+              aria-label="小牧人羊奶品牌宣傳片"
+            >
+              <source src="/videos/goatmilk-promo-720.mp4" type="video/mp4" />
+              您的瀏覽器不支援影片播放。
+            </video>
+            <img
+              class="hero-poster"
+              src="/videos/goatmilk-promo-poster.webp"
+              data-poster-fallback={heroPosterFallback}
+              alt="小牧人羊奶宣傳片封面"
+              width="720"
+              height="900"
+            />
+            <button
+              class="hero-video-control hero-sound-button"
+              type="button"
+              data-sound-toggle
+              aria-controls="hero-promo-video"
+              aria-label="開啟聲音"
+              aria-pressed="false"
+            >
+              開啟聲音
+            </button>
+            <button
+              class="hero-video-control hero-play-button"
+              type="button"
+              data-play-toggle
+              aria-controls="hero-promo-video"
+              aria-label="播放宣傳片"
+              aria-pressed="false"
+            >
+              ▶ 播放影片
+            </button>
+          </div>
           <div class="rating-card">
             <strong>{copyText(pageCopy, "home.hero.badgeTitle", "100% 天然")}</strong>
             <span>{copyText(pageCopy, "home.hero.badgeText", "牧場冷鏈直送，守護鮮乳純淨風味。")}</span>
@@ -177,6 +222,91 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
   </main>
 </MainLayout>
 
+<script is:inline>
+  (() => {
+    const card = document.querySelector("[data-hero-video-card]");
+    const video = card?.querySelector("video");
+    const poster = card?.querySelector(".hero-poster");
+    const soundButton = card?.querySelector("[data-sound-toggle]");
+    const playButton = card?.querySelector("[data-play-toggle]");
+
+    if (!(card instanceof HTMLElement) || !(video instanceof HTMLVideoElement)) return;
+    if (!(poster instanceof HTMLImageElement)) return;
+    if (!(soundButton instanceof HTMLButtonElement) || !(playButton instanceof HTMLButtonElement)) return;
+
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const updateSoundButton = () => {
+      const label = video.muted ? "開啟聲音" : "關閉聲音";
+      soundButton.textContent = label;
+      soundButton.setAttribute("aria-label", label);
+      soundButton.setAttribute("aria-pressed", String(!video.muted));
+    };
+
+    const updatePlayButton = () => {
+      const isPlaying = !video.paused;
+      playButton.textContent = isPlaying ? "❚❚ 暫停影片" : "▶ 播放影片";
+      playButton.setAttribute("aria-label", isPlaying ? "暫停宣傳片" : "播放宣傳片");
+      playButton.setAttribute("aria-pressed", String(isPlaying));
+      card.dataset.playing = String(isPlaying);
+    };
+
+    const usePosterFallback = () => {
+      const fallback = video.dataset.posterFallback;
+      if (!fallback) return;
+      video.poster = fallback;
+      if (poster.src !== fallback) poster.src = fallback;
+    };
+
+    const posterProbe = new Image();
+    posterProbe.addEventListener("error", usePosterFallback, { once: true });
+    posterProbe.src = video.poster;
+    poster.addEventListener("error", usePosterFallback, { once: true });
+
+    const applyMotionPreference = () => {
+      card.dataset.reducedMotion = String(motionPreference.matches);
+      if (motionPreference.matches) {
+        video.removeAttribute("autoplay");
+        video.pause();
+        video.currentTime = 0;
+        card.dataset.userStarted = "false";
+        updatePlayButton();
+        return;
+      }
+
+      video.setAttribute("autoplay", "");
+      video.muted = true;
+      updateSoundButton();
+      void video.play().catch(() => updatePlayButton());
+    };
+
+    soundButton.addEventListener("click", () => {
+      video.muted = !video.muted;
+      updateSoundButton();
+    });
+
+    playButton.addEventListener("click", () => {
+      card.dataset.userStarted = "true";
+      if (video.paused) {
+        void video.play().catch(() => updatePlayButton());
+      } else {
+        video.pause();
+      }
+    });
+
+    video.addEventListener("play", () => {
+      card.dataset.userStarted = "true";
+      updatePlayButton();
+    });
+    video.addEventListener("pause", updatePlayButton);
+    video.addEventListener("volumechange", updateSoundButton);
+    motionPreference.addEventListener("change", applyMotionPreference);
+
+    updateSoundButton();
+    applyMotionPreference();
+  })();
+</script>
+
 <style>
   .home-hero {
     margin-top: -82px;
@@ -222,12 +352,62 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
     width: min(100%, 440px);
   }
 
-  .hero-card img {
+  .hero-media-frame {
+    position: relative;
     aspect-ratio: 0.82;
     width: 100%;
-    object-fit: cover;
+    overflow: hidden;
     border-radius: 42px 42px 54px 54px;
+    background: #111;
     box-shadow: 0 26px 60px rgba(62, 54, 46, 0.16);
+  }
+
+  .hero-video,
+  .hero-poster {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-poster {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .hero-video-control {
+    position: absolute;
+    z-index: 2;
+    min-height: 44px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    padding: 9px 13px;
+    background: rgba(20, 20, 20, 0.72);
+    color: #fff;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .hero-video-control:focus-visible {
+    outline: 3px solid #fff8f3;
+    outline-offset: 3px;
+  }
+
+  .hero-sound-button {
+    top: 14px;
+    right: 14px;
+  }
+
+  .hero-play-button {
+    display: none;
+    right: 14px;
+    bottom: 14px;
   }
 
   .rating-card {
@@ -533,6 +713,30 @@ const products = homeProductFallbacks.map((fallback, index): Product => {
     .subscribe-form {
       align-items: stretch;
       flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-card:not([data-user-started="true"]) .hero-poster {
+      display: block;
+    }
+
+    .hero-card:not([data-user-started="true"]) .hero-sound-button {
+      display: none;
+    }
+
+    .hero-play-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-card:not([data-user-started="true"]) .hero-play-button {
+      top: 50%;
+      right: auto;
+      bottom: auto;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   }
 </style>
