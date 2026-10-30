@@ -411,10 +411,11 @@ const heroPosterFallback = copyImage(pageCopy, "home.hero.image", "/images/goat-
   }
 
   .rating-card {
-    position: absolute;
-    bottom: -22px;
-    left: -44px;
-    width: 210px;
+    position: relative;
+    z-index: 3;
+    width: min(210px, calc(100% - 24px));
+    margin-top: 0;
+    margin-left: -44px;
     border-radius: 18px;
     padding: 18px;
     background: #fff8f3;
@@ -705,8 +706,8 @@ const heroPosterFallback = copyImage(pageCopy, "home.hero.image", "/images/goat-
     }
 
     .rating-card {
-      right: 12px;
-      left: auto;
+      margin-right: 12px;
+      margin-left: auto;
     }
 
     .split-head,
