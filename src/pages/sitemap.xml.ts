@@ -1,8 +1,9 @@
 import type { APIRoute } from "astro";
 import { getNews } from "../lib/notion";
+import { getSiteUrl } from "../lib/site-url";
 
-export const GET: APIRoute = async ({ site }) => {
-  const siteUrl = process.env.SITE_URL || (site ? site.origin : "https://shepherd.zeabur.app");
+export const GET: APIRoute = async ({ site, url }) => {
+  const siteUrl = getSiteUrl(site, url);
   const baseUrl = siteUrl.replace(/\/$/, "");
 
   const staticPages = [

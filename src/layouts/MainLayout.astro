@@ -1,6 +1,7 @@
 ---
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
+import { getSiteUrl } from "@lib/site-url";
 
 interface Props {
   title: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const { title, description, path = "/" } = Astro.props;
-const siteUrl = import.meta.env.SITE_URL || process.env.SITE_URL || import.meta.env.PUBLIC_SITE_URL || "https://shepherd.zeabur.app";
+const siteUrl = getSiteUrl(Astro.site, Astro.url);
 const canonical = new URL(path, siteUrl).toString();
 
 const localBusinessSchema = {

@@ -1,7 +1,13 @@
 import { defineConfig } from "astro/config";
 import node from "@astrojs/node";
+import { loadSiteUrlEnvironment, resolveSiteUrlForCommand } from "./src/lib/site-url.ts";
 
 const isStaticBuild = process.env.ASTRO_OUTPUT === "static";
+const command = process.argv.slice(2).includes("build") ? "build" : "dev";
+const site = resolveSiteUrlForCommand({
+  command,
+  env: loadSiteUrlEnvironment()
+});
 
 export default defineConfig({
   output: isStaticBuild ? "static" : "server",
@@ -10,7 +16,7 @@ export default defineConfig({
     : node({
         mode: "standalone"
       }),
-  site: process.env.PUBLIC_SITE_URL || process.env.SITE_URL || "https://shepherd.zeabur.app",
+  site,
   image: {
     domains: ["localhost"]
   },

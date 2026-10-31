@@ -41,6 +41,7 @@ jobs:
           NOTION_PRODUCT_DB_ID: ${{ secrets.NOTION_PRODUCT_DB_ID }}
           NOTION_BRAND_DB_ID: ${{ secrets.NOTION_BRAND_DB_ID }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          SITE_URL: https://jacob-cloud-n8n.github.io
           PUBLIC_SITE_URL: https://jacob-cloud-n8n.github.io
           PUBLIC_LINE_URL: ${{ vars.PUBLIC_LINE_URL }}
           PUBLIC_NAVIGATION_NAME: ${{ vars.PUBLIC_NAVIGATION_NAME }}
