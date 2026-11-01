@@ -73,14 +73,6 @@ export const fallbackProducts: Product[] = [
     isActive: true
   },
   {
-    name: "牧場手作優酪乳",
-    price: 120,
-    category: "優酪乳",
-    image: "/images/product-board.webp",
-    desc: "綿密發酵，清爽酸甜，是每日早餐的溫柔選擇。",
-    isActive: true
-  },
-  {
     name: "羊奶布丁",
     price: 45,
     category: "甜點",
