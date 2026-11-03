@@ -17,7 +17,8 @@ const base = {
   deliveryPlace: "台中市西區公益路 1 號",
   plan: "3month",
   frequency: "每月配送",
-  note: "晚上 7 點後聯絡"
+  note: "晚上 7 點後聯絡",
+  privacyConsent: true
 };
 
 function post(body, env = {}) {
@@ -64,7 +65,8 @@ describe("前端合法組合", () => {
       deliveryPlace: "台中市西區公益路 1 號",
       plan: "3month",
       frequency: "每月配送",
-      deliveryType: "配送地點"
+      deliveryType: "配送地點",
+      privacyConsent: true
     });
     assert.equal(result.status, "ok");
     assert.equal(result.order.lineId, "");
@@ -75,7 +77,8 @@ describe("前端合法組合", () => {
     const result = validateOrderInput({
       name: "王小明",
       phone: "0912345678",
-      deliveryPlace: "台中市西區公益路 1 號"
+      deliveryPlace: "台中市西區公益路 1 號",
+      privacyConsent: true
     });
     assert.equal(result.status, "ok");
     assert.equal(result.order.plan, "3month");
@@ -159,6 +162,24 @@ describe("非法輸入被拒", () => {
   test("非物件 body", () => {
     assert.equal(validateOrderInput(null).status, "invalid");
     assert.equal(validateOrderInput([]).status, "invalid");
+  });
+
+  test("未勾個資同意被拒", () => {
+    const { privacyConsent, ...withoutConsent } = base;
+    assert.equal(validateOrderInput(withoutConsent).status, "invalid");
+    assert.equal(validateOrderInput({ ...base, privacyConsent: false }).status, "invalid");
+  });
+
+  test("已勾個資同意通過", () => {
+    assert.equal(validateOrderInput({ ...base, privacyConsent: true }).status, "ok");
+  });
+
+  test("handler 對未勾個資同意回 400 中文訊息", async () => {
+    const { privacyConsent, ...withoutConsent } = base;
+    const response = await post(withoutConsent);
+    assert.equal(response.status, 400);
+    const payload = await response.json();
+    assert.deepEqual(payload, { ok: false, message: "請勾選個資使用同意。" });
   });
 });
 

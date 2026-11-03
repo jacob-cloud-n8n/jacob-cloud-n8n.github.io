@@ -77,6 +77,8 @@ const planLabelsJson = JSON.stringify(planLabels);
             <textarea name="note" rows="3" maxlength="500" placeholder={copyText(pageCopy, "order.form.note.placeholder", "可填寫方便聯絡時間、希望配送日或其他需求")}></textarea>
           </label>
 
+          <label class="privacy-consent"><input name="privacyConsent" type="checkbox" required /> <span>{copyText(pageCopy, "order.privacy", "資料僅作訂購聯繫與配送使用，不會用於其他目的。")}</span></label>
+
           <div class="cf-turnstile" data-sitekey="0x4AAAAAAFxi9Dg6Rhs0n7Ps" data-language="zh-tw"></div>
 
           <button class="button" type="submit">{copyText(pageCopy, "order.form.submit", "送出並通知 Line")}</button>
@@ -154,6 +156,7 @@ const planLabelsJson = JSON.stringify(planLabels);
     }
 
     payload.turnstileToken = turnstileToken || "";
+    payload.privacyConsent = formData.get("privacyConsent") === "on";
 
     status.textContent = "訂單送出中...";
     submitButton.disabled = true;
@@ -319,6 +322,24 @@ const planLabelsJson = JSON.stringify(planLabels);
 
   .radio-row input {
     width: auto;
+  }
+
+  .privacy-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: rgba(62, 54, 46, 0.66);
+    font-size: 0.9rem;
+  }
+
+  .privacy-consent input {
+    width: auto;
+    margin-top: 4px;
+  }
+
+  .privacy-consent span {
+    color: rgba(62, 54, 46, 0.66);
+    font-weight: 400;
   }
 
   .order-form .button {

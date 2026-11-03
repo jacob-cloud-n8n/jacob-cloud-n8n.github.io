@@ -98,6 +98,10 @@ export function validateOrderInput(input: unknown): OrderValidationResult {
     return invalid("配送方式選項不正確，請重新選擇。");
   }
 
+  if (body.privacyConsent !== true) {
+    return invalid("請勾選個資使用同意。");
+  }
+
   return {
     status: "ok",
     order: { name, phone, lineId, deliveryType, deliveryPlace, plan, frequency, note }
