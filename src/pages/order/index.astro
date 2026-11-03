@@ -77,12 +77,15 @@ const planLabelsJson = JSON.stringify(planLabels);
             <textarea name="note" rows="3" maxlength="500" placeholder={copyText(pageCopy, "order.form.note.placeholder", "可填寫方便聯絡時間、希望配送日或其他需求")}></textarea>
           </label>
 
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAAFxi9Dg6Rhs0n7Ps" data-language="zh-tw"></div>
+
           <button class="button" type="submit">{copyText(pageCopy, "order.form.submit", "送出並通知 Line")}</button>
           <p class="form-status" data-form-status role="status"></p>
         </form>
       </div>
     </section>
   </main>
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </MainLayout>
 
 <script>
@@ -93,6 +96,7 @@ const planLabelsJson = JSON.stringify(planLabels);
   const selectedFrequency = document.querySelector("[data-selected-frequency]");
   const planInput = form?.querySelector("input[name='plan']");
   const frequencyInput = form?.querySelector("input[name='frequency']");
+  const turnstileWidget = form?.querySelector(".cf-turnstile");
   const planLabels = JSON.parse(summaryCard?.dataset.planLabels || "{}");
   const params = new URLSearchParams(window.location.search);
   const currentPlan = params.get("plan");
@@ -142,6 +146,14 @@ const planLabelsJson = JSON.stringify(planLabels);
     const submitButton = form.querySelector("button[type='submit']");
     const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
+    const turnstileToken = formData.get("cf-turnstile-response");
+
+    if (turnstileWidget && window.turnstile && !turnstileToken) {
+      status.textContent = "請完成驗證後再送出";
+      return;
+    }
+
+    payload.turnstileToken = turnstileToken || "";
 
     status.textContent = "訂單送出中...";
     submitButton.disabled = true;
@@ -156,6 +168,12 @@ const planLabelsJson = JSON.stringify(planLabels);
         ? await response.json()
         : { ok: false };
 
+      if (response.status === 400 && String(result.message || "").includes("驗證未通過")) {
+        window.turnstile?.reset?.();
+        status.textContent = "請完成驗證後再送出";
+        return;
+      }
+
       if (!response.ok || !result.ok) {
         renderStatus(result.message);
         return;
@@ -163,6 +181,7 @@ const planLabelsJson = JSON.stringify(planLabels);
 
       status.textContent = "訂單已送出，我們會透過官方 Line 與您確認。";
       form.reset();
+      window.turnstile?.reset?.();
     } catch (error) {
       renderStatus(failureMessage);
     } finally {

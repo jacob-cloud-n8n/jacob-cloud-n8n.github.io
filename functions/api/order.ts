@@ -1,8 +1,10 @@
 import { validateOrderInput } from "./order-validation.ts";
+import { TURNSTILE_FAILURE_MESSAGE, verifyTurnstile } from "./turnstile.ts";
 
 interface Env {
   NOTION_TOKEN?: string;
   NOTION_ORDER_DB_ID?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 type PagesContext = {
@@ -109,6 +111,16 @@ export const onRequestPost = async ({ request, env }: PagesContext): Promise<Res
     }
     if (validation.status === "invalid") {
       return jsonResponse({ ok: false, message: validation.message }, 400);
+    }
+
+    const input = body as Record<string, unknown>;
+    const turnstileOk = await verifyTurnstile(
+      env,
+      input.turnstileToken,
+      request.headers.get("CF-Connecting-IP")
+    );
+    if (!turnstileOk) {
+      return jsonResponse({ ok: false, message: TURNSTILE_FAILURE_MESSAGE }, 400);
     }
 
     const order: Order = {

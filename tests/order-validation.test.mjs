@@ -7,6 +7,7 @@ import {
   DELIVERY_TYPE_VALUES
 } from "../functions/api/order-validation.ts";
 import { onRequestPost } from "../functions/api/order.ts";
+import { TURNSTILE_FAILURE_MESSAGE, TURNSTILE_VERIFY_URL } from "../functions/api/turnstile.ts";
 
 const base = {
   name: "王小明",
@@ -24,6 +25,17 @@ function post(body, env = {}) {
     request: new Request("https://example.test/api/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }),
+    env
+  });
+}
+
+function postWithHeaders(body, env = {}, headers = {}) {
+  return onRequestPost({
+    request: new Request("https://example.test/api/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...headers },
       body: JSON.stringify(body)
     }),
     env
@@ -166,5 +178,115 @@ describe("蜜罐", () => {
     assert.equal(response.status, 200);
     const payload = await response.json();
     assert.deepEqual(payload, { ok: true, mode: "notion" });
+  });
+});
+
+describe("Turnstile", () => {
+  test("secret 已設定且 siteverify 成功：帶 secret、token、remoteip 驗證後才繼續", async () => {
+    const originalFetch = globalThis.fetch;
+    const calls = [];
+    globalThis.fetch = async (url, init) => {
+      calls.push({ url: String(url), init });
+      return Response.json({ success: true });
+    };
+    try {
+      const response = await postWithHeaders(
+        { ...base, turnstileToken: "token-ok" },
+        { TURNSTILE_SECRET_KEY: "secret-key" },
+        { "CF-Connecting-IP": "203.0.113.7" }
+      );
+      assert.equal(response.status, 503);
+      assert.equal(calls.length, 1);
+      assert.equal(calls[0].url, TURNSTILE_VERIFY_URL);
+      const params = new URLSearchParams(calls[0].init.body);
+      assert.equal(params.get("secret"), "secret-key");
+      assert.equal(params.get("response"), "token-ok");
+      assert.equal(params.get("remoteip"), "203.0.113.7");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  test("siteverify 失敗：回 400 中文訊息且不寫入 Notion", async () => {
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return Response.json({ success: false });
+    };
+    try {
+      const response = await post(
+        { ...base, turnstileToken: "token-bad" },
+        { TURNSTILE_SECRET_KEY: "secret-key" }
+      );
+      assert.equal(response.status, 400);
+      const payload = await response.json();
+      assert.deepEqual(payload, { ok: false, message: TURNSTILE_FAILURE_MESSAGE });
+      assert.equal(calls, 1);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  test("secret 未設定：略過驗證、不呼叫 siteverify、印出警告且照舊處理", async () => {
+    const originalFetch = globalThis.fetch;
+    const originalWarn = console.warn;
+    let calls = 0;
+    let warned = false;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return Response.json({ success: false });
+    };
+    console.warn = () => {
+      warned = true;
+    };
+    try {
+      const response = await post({ ...base }, {});
+      assert.equal(response.status, 503);
+      assert.equal(calls, 0);
+      assert.equal(warned, true);
+    } finally {
+      globalThis.fetch = originalFetch;
+      console.warn = originalWarn;
+    }
+  });
+
+  test("蜜罐優先：有值時回假成功且完全不呼叫 siteverify", async () => {
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return Response.json({ success: true });
+    };
+    try {
+      const response = await post(
+        { ...base, website: "https://spam.example" },
+        { TURNSTILE_SECRET_KEY: "secret-key" }
+      );
+      assert.equal(response.status, 200);
+      const payload = await response.json();
+      assert.deepEqual(payload, { ok: true, mode: "notion" });
+      assert.equal(calls, 0);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  test("secret 已設定但缺少 token：回 400", async () => {
+    const originalFetch = globalThis.fetch;
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls += 1;
+      return Response.json({ success: true });
+    };
+    try {
+      const response = await post({ ...base }, { TURNSTILE_SECRET_KEY: "secret-key" });
+      assert.equal(response.status, 400);
+      const payload = await response.json();
+      assert.deepEqual(payload, { ok: false, message: TURNSTILE_FAILURE_MESSAGE });
+      assert.equal(calls, 0);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
