@@ -1,3 +1,5 @@
+import { validateOrderInput } from "./order-validation.ts";
+
 interface Env {
   NOTION_TOKEN?: string;
   NOTION_ORDER_DB_ID?: string;
@@ -32,10 +34,6 @@ const unavailableMessage = "訂單系統暫時無法使用，請改用電話 091
 
 function clean(value: unknown): string {
   return String(value ?? "").trim();
-}
-
-function validPhone(value: string): boolean {
-  return /^[0-9+\-\s()]{8,20}$/.test(value);
 }
 
 function jsonResponse(body: object, status = 200): Response {
@@ -98,26 +96,26 @@ async function createNotionOrder(env: Env, order: Order): Promise<boolean> {
 
 export const onRequestPost = async ({ request, env }: PagesContext): Promise<Response> => {
   try {
-    const body = await request.json() as Record<string, unknown>;
-    const order = {
-      name: clean(body.name),
-      phone: clean(body.phone),
-      lineId: clean(body.lineId),
-      deliveryType: clean(body.deliveryType),
-      deliveryPlace: clean(body.deliveryPlace),
-      plan: planLabels[clean(body.plan)] ?? clean(body.plan),
-      frequency: clean(body.frequency),
-      note: clean(body.note),
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return jsonResponse({ ok: false, message: "送出資料格式有誤，請重新整理後再試。" }, 400);
+    }
+
+    const validation = validateOrderInput(body);
+    if (validation.status === "honeypot") {
+      return jsonResponse({ ok: true, mode: "notion" });
+    }
+    if (validation.status === "invalid") {
+      return jsonResponse({ ok: false, message: validation.message }, 400);
+    }
+
+    const order: Order = {
+      ...validation.order,
+      plan: planLabels[validation.order.plan] ?? validation.order.plan,
       submittedAt: new Date().toISOString()
     };
-
-    if (!order.name || !order.phone || !order.deliveryPlace) {
-      return jsonResponse({ ok: false, message: "請填寫姓名、電話與配送地點或門市。" }, 400);
-    }
-
-    if (!validPhone(order.phone)) {
-      return jsonResponse({ ok: false, message: "請確認電話格式。" }, 400);
-    }
 
     if (await createNotionOrder(env, order)) {
       return jsonResponse({ ok: true, mode: "notion" });
