@@ -89,7 +89,9 @@ export function validateOrderInput(input: unknown): OrderValidationResult {
   if (!(PLAN_VALUES as readonly string[]).includes(plan)) {
     return invalid("方案選項不正確，請回到配送方案頁重新選擇。");
   }
-  if (!(FREQUENCY_VALUES as readonly string[]).includes(frequency)) {
+  // 2026-11-03 Claude：頻率文字來自 Notion 文案（delivery.frequency.*），改文案就會變，
+  // 不做白名單，只限非空與長度，避免改文案後真客人全部下不了單。
+  if (!frequency || frequency.length > 20) {
     return invalid("配送頻率選項不正確，請回到配送方案頁重新選擇。");
   }
   if (!(DELIVERY_TYPE_VALUES as readonly string[]).includes(deliveryType)) {

@@ -97,9 +97,16 @@ describe("非法輸入被拒", () => {
     assert.equal(result.status, "invalid");
   });
 
-  test("非白名單配送頻率", () => {
-    const result = validateOrderInput({ ...base, frequency: "每週配送" });
-    assert.equal(result.status, "invalid");
+  test("配送頻率改成 Notion 新文案仍接受", () => {
+    const result = validateOrderInput({ ...base, frequency: "每月配送一次" });
+    assert.equal(result.status, "ok");
+  });
+
+  test("配送頻率空白時預設每月配送、超長被拒", () => {
+    const empty = validateOrderInput({ ...base, frequency: "" });
+    assert.equal(empty.status, "ok");
+    assert.equal(empty.order.frequency, "每月配送");
+    assert.equal(validateOrderInput({ ...base, frequency: "字".repeat(21) }).status, "invalid");
   });
 
   test("非白名單配送方式", () => {
